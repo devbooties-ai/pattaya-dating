@@ -2,11 +2,11 @@
 (function(){
 const auth=()=>window.PattayaAuth,client=()=>auth()?.getClient(),user=()=>auth()?.getSession()?.user?.id;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let selected=null,timer=null;
+let selected=null,timer=null,contactsTimer=null,contactRefreshBusy=false;
 function halt(){if(timer)clearInterval(timer);timer=null}
 let conversations=[],activeDemo=1;
 async function list(el){
- halt();
+ halt();if(contactsTimer)clearInterval(contactsTimer);
  // Keep the established v0.6 three-column design for both demo and real chats.
  el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><h2>Messages</h2><div class="chatContactCount">Demo contacts and live conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Demo contacts are labeled. Real requests appear here too.</div></aside><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
  document.getElementById('unified-search').oninput=renderContactList;
@@ -19,6 +19,13 @@ async function list(el){
  renderContactList();
  const found=conversations.find(c=>c.id===selected);
  if(found)openConversation(found);else openDemo(activeDemo);
+ contactsTimer=setInterval(refreshContacts,7000);
+}
+async function refreshContacts(){
+ if(contactRefreshBusy||!document.getElementById('unified-contacts')||!user()){if(!document.getElementById('unified-contacts')&&contactsTimer){clearInterval(contactsTimer);contactsTimer=null}return}
+ contactRefreshBusy=true;
+ try{const {data,error}=await client().rpc('dating_my_conversations');if(!error&&document.getElementById('unified-contacts')){const previous=conversations;conversations=data||[];renderContactList();const total=conversations.reduce((n,c)=>n+Number(c.unread_count||0),0);const nav=document.querySelector('#sidebarNav .nav:nth-child(3)');if(nav){nav.title=total?total+' unread messages':'Chats';nav.setAttribute('aria-label',total?'Chats, '+total+' unread':'Chats')};const active=conversations.find(c=>c.id===selected);if(active&&previous.find(c=>c.id===selected)?.status!==active.status)openConversation(active)}}
+ finally{contactRefreshBusy=false}
 }
 function renderContactList(){
  const box=document.getElementById('unified-contacts');if(!box)return;
@@ -28,9 +35,9 @@ function renderContactList(){
  for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
   const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');b.innerHTML='<span class="contactAvatar">'+p.name[0]+'</span><span class="contactData"><strong>'+p.name+', '+p.age+'</strong><small>Demo conversation</small></span>';b.onclick=()=>openDemo(p.id);box.append(b);
  }
- for(const c of conversations.filter(c=>c.display_name.toLowerCase().includes(q))){
+ for(const c of conversations.filter(c=>c.display_name.toLowerCase().includes(q)).sort((a,b)=>((b.status==='pending'&&b.incoming?1:0)-(a.status==='pending'&&a.incoming?1:0))||Number(b.unread_count||0)-Number(a.unread_count||0)||new Date(b.updated_at)-new Date(a.updated_at))){
   const b=document.createElement('button');b.className='chatitem'+(selected===c.id?' selected':'');
-  b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(c.status==='pending'?(c.incoming?'● New request':'Request sent'):c.status==='accepted'?'Live conversation':'Declined')+'</small></span>';
+  b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(c.status==='pending'?(c.incoming?'● New request':'Request sent'):c.status==='accepted'?'Live conversation':'Declined')+(Number(c.unread_count)>0?' · '+Number(c.unread_count)+' unread':'')+'</small><small>'+esc((c.last_message||'').slice(0,65))+'</small></span>';
   b.onclick=()=>openConversation(c);box.append(b);
  }
 }
@@ -50,6 +57,7 @@ function openDemo(id){
 }
 async function openConversation(c){
  halt();selected=c.id;renderContactList();
+ await client().rpc('dating_mark_read',{conv_id:c.id});refreshContacts();
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><div><h2>'+esc(c.display_name)+'</h2><span class="chatSub">'+esc(c.status==='pending'?'Message request · Live member':'Live member · '+c.status)+'</span></div></header><div class="chatlog" id="live-messages">Loading…</div><div id="live-chat-actions"></div><p id="live-chat-note" class="microcopy" role="status"></p>';
  const actions=document.getElementById('live-chat-actions');
@@ -70,7 +78,7 @@ async function loadMessages(id){
  const el=document.getElementById('live-messages');if(!el)return;
  const {data,error}=await client().from('member_messages').select('sender_id,body,created_at').eq('conversation_id',id).order('created_at',{ascending:true}).limit(200);
  if(!el.isConnected)return;if(error){el.textContent=error.message;return}
- el.replaceChildren();for(const m of data||[]){const b=document.createElement('div');b.className='bubble'+(m.sender_id===user()?' mine':'');b.textContent=m.body;el.append(b)}el.scrollTop=el.scrollHeight;
+ el.replaceChildren();for(const m of data||[]){const b=document.createElement('div');b.className='bubble'+(m.sender_id===user()?' mine':'');b.textContent=m.body;el.append(b)}el.scrollTop=el.scrollHeight;if(selected===id&&document.visibilityState==='visible')await client().rpc('dating_mark_read',{conv_id:id});
 }
 window.datingOpenChats=function(){window.go('chats')};
 window.datingStartConversation=async function(target){if(!user())return alert('Please sign in first.');const msg=prompt('First message (request):');if(!msg?.trim())return;const {error}=await client().rpc('dating_send_message',{target,message_body:msg.trim()});if(error)alert(error.message);else window.go('chats')};
