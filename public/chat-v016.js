@@ -16,15 +16,16 @@ async function list(el){
  conversations=error?[]:(data||[]);
  if(error)document.getElementById('unified-contacts').textContent=error.message;
  }else conversations=[];
+ if(user())await refreshSupport();
  renderContactList();
  const found=conversations.find(c=>c.id===selected);
- if(found)openConversation(found);else openDemo(activeDemo);
+ if(found)openConversation(found);else if(activeDemo===0&&supportItems.length)showSupportConversation();else openDemo(activeDemo);
  contactsTimer=setInterval(refreshContacts,12000);attachRealtime();
 }
 async function refreshContacts(){
  if(contactRefreshBusy||!document.getElementById('unified-contacts')||!user()){if(!document.getElementById('unified-contacts')&&contactsTimer){clearInterval(contactsTimer);contactsTimer=null}return}
  contactRefreshBusy=true;
- try{const {data,error}=await client().rpc('dating_my_conversations');if(!error&&document.getElementById('unified-contacts')){const previous=conversations;conversations=data||[];renderContactList();const total=conversations.reduce((n,c)=>n+Number(c.unread_count||0),0);const nav=document.querySelector('#sidebarNav .nav:nth-child(3)');if(nav){nav.title=total?total+' unread messages':'Chats';nav.setAttribute('aria-label',total?'Chats, '+total+' unread':'Chats')};const active=conversations.find(c=>c.id===selected);if(active&&previous.find(c=>c.id===selected)?.status!==active.status)openConversation(active)}}
+ try{const {data,error}=await client().rpc('dating_my_conversations');if(!error&&document.getElementById('unified-contacts')){await refreshSupport();const previous=conversations;conversations=data||[];renderContactList();const total=conversations.reduce((n,c)=>n+Number(c.unread_count||0),0);const nav=document.querySelector('#sidebarNav .nav:nth-child(3)');if(nav){nav.title=total?total+' unread messages':'Chats';nav.setAttribute('aria-label',total?'Chats, '+total+' unread':'Chats')};const active=conversations.find(c=>c.id===selected);if(active&&previous.find(c=>c.id===selected)?.status!==active.status)openConversation(active)}}
  finally{contactRefreshBusy=false}
 }
 function attachRealtime(){
@@ -40,6 +41,38 @@ function attachRealtime(){
  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'member_conversations'},()=>{if(document.getElementById('unified-contacts'))refreshContacts()})
  .subscribe();
 }
+
+function openReportDialog(c){
+ document.getElementById('pd-report-overlay')?.remove();
+ const overlay=document.createElement('div');overlay.id='pd-report-overlay';overlay.className='pd-report-overlay';
+ overlay.innerHTML='<div class="pd-report-dialog" role="dialog" aria-modal="true" aria-labelledby="pd-report-title"><button type="button" class="pd-report-close" aria-label="Close">×</button><h2 id="pd-report-title">Report member</h2><p class="muted">Report '+esc(c.display_name)+' to Pattaya Dating Support. Reports are confidential.</p><form id="pd-report-form"><label for="pd-report-reason">Why are you reporting this member?</label><select id="pd-report-reason" name="reason" required><option value="">Choose a reason</option><option value="spam">Spam or unwanted messages</option><option value="scam">Fraud or scam attempt</option><option value="harassment">Harassment or threats</option><option value="fake_profile">Fake profile / impersonation</option><option value="inappropriate_content">Inappropriate content</option><option value="other">Other</option></select><label for="pd-report-details">Additional information (optional)</label><textarea id="pd-report-details" name="details" maxlength="1000" rows="4" placeholder="Tell us what happened..."></textarea><p class="pd-help" id="pd-report-feedback" role="status"></p><div class="pd-report-actions"><button type="button" class="pd-outline" id="pd-report-cancel">Cancel</button><button type="submit" class="primary">Submit report</button></div></form></div>';
+ document.body.append(overlay);const close=()=>overlay.remove();
+ overlay.querySelector('.pd-report-close').onclick=close;overlay.querySelector('#pd-report-cancel').onclick=close;
+ overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+ overlay.querySelector('form').onsubmit=async e=>{
+ e.preventDefault();const form=e.currentTarget,button=form.querySelector('[type=submit]'),reason=form.elements.reason.value,details=form.elements.details.value;
+ if(!reason)return;button.disabled=true;const feedback=overlay.querySelector('#pd-report-feedback');feedback.textContent='Sending your report…';
+ try{const {error}=await client().rpc('dating_submit_report',{target:c.other_id,convo:c.id,report_reason:reason,report_details:details});
+ if(error)throw error;close();await refreshSupport();showSupportConversation();}
+ catch(err){feedback.textContent=err.message||'Unable to send report.';button.disabled=false}
+ };
+ overlay.querySelector('select').focus();
+}
+let supportItems=[];
+async function refreshSupport(){
+ if(!user())return;
+ const {data,error}=await client().from('support_messages').select('id,body,created_at,read_at').eq('user_id',user()).order('created_at',{ascending:true}).limit(100);
+ if(!error){supportItems=data||[];renderContactList();window.PattayaNotifications?.refresh?.()}
+}
+function showSupportConversation(){
+ halt();selected=null;activeDemo=0;renderContactList();
+ const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
+ center.innerHTML='<header class="chat-head"><span class="contactAvatar">♥</span><div><h2>Pattaya Dating Support</h2><span class="chatSub">Official system messages</span></div></header><div class="chatlog" id="support-chat-messages"></div><p class="microcopy">Automated support confirmations. Replies to Support will be enabled in a later version.</p>';
+ side.innerHTML='<div class="inspectorAvatar">♥</div><div class="inspectorName">Pattaya Dating Support</div><div class="inspectorMeta">Official platform account</div><p class="microcopy">This is a system conversation, not a dating profile.</p>';
+ const log=document.getElementById('support-chat-messages');for(const m of supportItems){const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=m.body;log.append(bubble)}log.scrollTop=log.scrollHeight;
+ client().rpc('dating_mark_support_read').then(()=>{supportItems.forEach(x=>x.read_at=x.read_at||new Date().toISOString());renderContactList();window.PattayaNotifications?.refresh?.()});
+}
+
 function renderContactList(){
  const box=document.getElementById('unified-contacts');if(!box)return;
  const q=(document.getElementById('unified-search')?.value||'').toLowerCase();
@@ -54,6 +87,7 @@ function renderContactList(){
   b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(request?'New request':c.status==='pending'?'Request sent':c.status==='accepted'?'Live conversation':'Declined')+'</small><small>'+preview+'</small></span>'+(request?'<span class="pd-unread-dot" aria-label="New request"></span>':unread?'<span class="pd-unread-count">'+unread+'</span>':'');
   b.onclick=()=>openConversation(c);box.append(b);
  }
+ if(supportItems.length&&'Pattaya Dating Support'.toLowerCase().includes(q)){const unread=supportItems.filter(m=>!m.read_at).length;const b=document.createElement('button');b.className='chatitem'+(activeDemo===0?' selected':'')+(unread?' pd-contact-unread':'');b.innerHTML='<span class="contactAvatar">♥</span><span class="contactData"><strong>Pattaya Dating Support</strong><small>'+esc(supportItems[supportItems.length-1].body.slice(0,58))+'</small></span>'+(unread?'<span class="pd-unread-count">'+unread+'</span>':'');b.onclick=showSupportConversation;box.prepend(b)}
  const demos=[{id:1,name:'Mali',age:28},{id:2,name:'Niran',age:33}];
  for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
   const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');
@@ -90,7 +124,8 @@ async function openConversation(c){
  side.innerHTML='<div class="inspectorAvatar">'+esc(c.display_name[0]||'?')+'</div><div class="inspectorName">'+esc(c.display_name)+'</div><div class="inspectorMeta">Real member · '+esc(c.status)+'</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="live-gift">🎁 Gifts · Demo</button><button class="lightbtn video-btn" id="live-video">◉ Video · Demo</button><button class="lightbtn" id="live-report">Report member</button><button class="lightbtn" id="live-block">Block this member</button></div><p class="microcopy">Gifts and video calls for real users are not yet available.</p>';
  document.getElementById('live-gift').onclick=()=>alert('Virtual gifts for real members are not active yet.');
  document.getElementById('live-video').onclick=()=>alert('Real video calls are not available yet.');
- document.getElementById('live-report').onclick=async()=>{const reason=prompt('Report reason: spam, harassment, fake_profile, inappropriate_content, other','spam');if(!reason)return;const allowed=['spam','harassment','fake_profile','inappropriate_content','other'];if(!allowed.includes(reason))return alert('Choose a listed reason.');const details=prompt('Additional details (optional, maximum 1000 characters):','')||'';const {error}=await client().from('member_reports').insert({reporter_id:user(),reported_id:c.other_id,conversation_id:c.id,reason,details:details.slice(0,1000)});alert(error?'Report failed: '+error.message:'Report submitted to moderation.');};
+ document.getElementById('live-report').onclick=()=>openReportDialog(c);
+
  document.getElementById('live-block').onclick=async()=>{if(!confirm('Block this member?'))return;const {error}=await client().from('member_blocks').insert({blocker_id:user(),blocked_id:c.other_id});if(error)alert(error.message);else{selected=null;list(document.getElementById('content'))}};
  await loadMessages(c.id);
  timer=setInterval(()=>{if(document.getElementById('live-messages')&&user())loadMessages(c.id);else halt()},4000);
