@@ -20,7 +20,7 @@ function renderAccount(){
  $('pd-current-user').textContent='Signed in: '+(session.user.email||'Account');
  $('pd-real-logout').addEventListener('click',async()=>{await client.auth.signOut();session=null;renderAccount()});
  $('pd-real-profile').addEventListener('submit',saveProfile);
- loadProfile(); loadPhotos(); $('pd-upload-btn').onclick=uploadPhoto; 
+ loadProfile(); loadPhotos(); $('pd-upload-btn').onclick=uploadPhoto; client.rpc('is_dating_admin').then(({data})=>{if(data && $('pd-real-logout')){const b=document.createElement('button');b.className='pd-outline';b.textContent='Open moderation dashboard';b.style.marginRight='12px';b.onclick=()=>window.openDatingAdmin?.();$('pd-real-logout').before(b)}}); 
  }else{
  box.insertAdjacentHTML('beforeend','<div class="pd-tabs"><button type="button" id="pd-signup">Create account</button><button type="button" id="pd-signin">Sign in</button></div><form id="pd-auth-form"><div class="pd-field"><label>Email address<input name="email" type="email" autocomplete="email" required></label></div><div class="pd-field"><label>Password<input name="password" type="password" autocomplete="new-password" required minlength="8"></label></div><div id="pd-legal"><label><input name="adult" type="checkbox" required> I confirm I am 18 or older.</label><p class="pd-help">Test access only. Profiles are not publicly visible.</p></div><button class="primary" type="submit" id="pd-auth-submit">Create account</button></form><button id="pd-reset-password" class="pd-outline" type="button">Forgot password?</button>');
  $('pd-signup').onclick=()=>switchMode('signup');$('pd-signin').onclick=()=>switchMode('signin');$('pd-auth-form').onsubmit=submitAuth;
