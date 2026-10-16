@@ -7,7 +7,7 @@ window.openDatingAdmin=async function(){
  if(!c||!el)return;
  const {data:allowed,error:authError}=await c.rpc('is_dating_admin');
  if(authError||!allowed){alert('Admin access not enabled for this account.');return}
- el.innerHTML='<section class="panel"><div class="pd-top"><div><span class="pd-kicker">RESTRICTED ACCESS</span><h2>Moderation dashboard</h2><p class="muted">Review profiles and images before publishing.</p></div><button class="pd-outline" id="admin-back">Back to profile</button></div><div id="admin-review-status" role="status"></div><h3>Member profiles</h3><div id="admin-profiles">Loading…</div><div class="pd-rule"></div><h3>Photos awaiting review</h3><div id="admin-photos">Loading…</div><div class="pd-rule"></div><h3>Member reports</h3><div id="admin-reports">Loading…</div></section>';
+ el.innerHTML='<section class="panel"><div class="pd-top"><div><span class="pd-kicker">RESTRICTED ACCESS</span><h2>Moderation dashboard</h2><p class="muted">Review profiles and images before publishing.</p></div><button class="pd-outline" id="admin-back">Back to profile</button></div><div id="admin-review-status" role="status"></div><h3>Member profiles</h3><div id="admin-profiles">Loading…</div><div class="pd-rule"></div><h3>Photos awaiting review</h3><div id="admin-photos">Loading…</div><div class="pd-rule"></div><h3>Member reports</h3><div id="admin-reports">Loading…</div><div class="pd-rule"></div><h3>Support conversations</h3><div id="admin-support-threads">Loading…</div><div id="admin-support-detail"></div></section>';
  document.getElementById('admin-back').onclick=()=>window.go('profile');
  const [pr,ph,reports]=await Promise.all([c.rpc('admin_pending_profiles'),c.rpc('admin_pending_photos'),c.rpc('dating_admin_reports')]);
  const p=document.getElementById('admin-profiles'),h=document.getElementById('admin-photos');
@@ -29,6 +29,7 @@ window.openDatingAdmin=async function(){
   for(const st of ['approved','rejected']){const b=document.createElement('button');b.className='pd-outline';b.textContent=st;b.style.marginRight='8px';b.onclick=async()=>{if(!confirm(st+' this photo?'))return;const r=await c.rpc('admin_set_photo_status',{target_photo:row.photo_id,new_status:st});if(r.error)alert(r.error.message);else window.openDatingAdmin()};controls.append(b)}
   card.append(controls);h.append(card)
  }
+ const supportBox=document.getElementById('admin-support-threads');if(supportBox){const {data,error}=await c.rpc('dating_admin_support_threads');supportBox.replaceChildren();if(error)supportBox.textContent=error.message;else if(!data?.length)supportBox.textContent='No support conversations.';else for(const thread of data){const b=document.createElement('button');b.className='pd-outline';b.style.margin='4px';b.textContent=thread.display_name+' · '+(thread.last_message||'').slice(0,45);b.onclick=()=>openSupportThread(c,thread);supportBox.append(b)}}
  const reportBox=document.getElementById('admin-reports');
  if(reportBox){reportBox.replaceChildren();if(reports.error)reportBox.textContent=reports.error.message;else if(!reports.data?.length)reportBox.textContent='No member reports.';else for(const report of reports.data){
  const row=document.createElement('div');row.className='pd-member-row';
@@ -40,4 +41,14 @@ window.openDatingAdmin=async function(){
  reportBox.append(row)
  }}
 };
+async function openSupportThread(c,thread){
+ const root=document.getElementById('admin-support-detail');if(!root)return;root.replaceChildren();
+ const heading=document.createElement('h4');heading.textContent='Support: '+thread.display_name;root.append(heading);
+ const messages=document.createElement('div');messages.className='chatlog';messages.style.cssText='min-height:150px;max-height:320px;overflow:auto;padding:14px;background:#fafbfe';root.append(messages);
+ const {data,error}=await c.rpc('dating_admin_support_messages',{target_user:thread.user_id});if(error){messages.textContent=error.message;return}
+ for(const m of data||[]){const bubble=document.createElement('div');bubble.className='bubble'+(m.sender_type==='support'?' mine':'');bubble.textContent=m.body;messages.append(bubble)}messages.scrollTop=messages.scrollHeight;
+ const form=document.createElement('form');form.className='composer';form.innerHTML='<input name="message" maxlength="2000" required placeholder="Reply as Pattaya Dating Support…"><button class="primary">Send reply</button>';root.append(form);
+ const status=document.createElement('p');status.className='pd-help';root.append(status);
+ form.onsubmit=async e=>{e.preventDefault();const body=form.elements.message.value.trim();if(!body)return;const send=form.querySelector('button');send.disabled=true;const {error}=await c.rpc('dating_admin_support_send',{target_user:thread.user_id,message_body:body});send.disabled=false;if(error)status.textContent=error.message;else openSupportThread(c,thread)}
+}
 })();
