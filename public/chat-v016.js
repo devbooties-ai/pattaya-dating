@@ -61,15 +61,16 @@ function openReportDialog(c){
 let supportItems=[];
 async function refreshSupport(){
  if(!user())return;
- const {data,error}=await client().from('support_messages').select('id,body,created_at,read_at').eq('user_id',user()).order('created_at',{ascending:true}).limit(100);
+ const {data,error}=await client().from('support_messages').select('id,body,created_at,read_at,sender_type').eq('user_id',user()).order('created_at',{ascending:true}).limit(100);
  if(!error){supportItems=data||[];renderContactList();window.PattayaNotifications?.refresh?.()}
 }
 function showSupportConversation(){
  halt();selected=null;activeDemo=0;renderContactList();
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
- center.innerHTML='<header class="chat-head"><span class="contactAvatar">♥</span><div><h2>Pattaya Dating Support</h2><span class="chatSub">Official system messages</span></div></header><div class="chatlog" id="support-chat-messages"></div><p class="microcopy">Automated support confirmations. Replies to Support will be enabled in a later version.</p>';
+ center.innerHTML='<header class="chat-head"><span class="contactAvatar">♥</span><div><h2>Pattaya Dating Support</h2><span class="chatSub">Official system messages</span></div></header><div class="chatlog" id="support-chat-messages"></div><form class="composer" id="pd-support-compose"><input name="message" maxlength="2000" placeholder="Write to Support…" required><button class="primary">Send</button></form><p class="microcopy" id="pd-support-status">Messages are sent to Pattaya Dating Support.</p>';
  side.innerHTML='<div class="inspectorAvatar">♥</div><div class="inspectorName">Pattaya Dating Support</div><div class="inspectorMeta">Official platform account</div><p class="microcopy">This is a system conversation, not a dating profile.</p>';
- const log=document.getElementById('support-chat-messages');for(const m of supportItems){const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=m.body;log.append(bubble)}log.scrollTop=log.scrollHeight;
+ const log=document.getElementById('support-chat-messages');for(const m of supportItems){const bubble=document.createElement('div');bubble.className='bubble'+(m.sender_type==='member'?' mine':'');bubble.textContent=m.body;log.append(bubble)}log.scrollTop=log.scrollHeight;
+ document.getElementById('pd-support-compose').onsubmit=async e=>{e.preventDefault();const form=e.currentTarget,msg=form.elements.message.value.trim();if(!msg)return;const btn=form.querySelector('button');btn.disabled=true;const {error}=await client().rpc('dating_support_send',{message_body:msg});btn.disabled=false;if(error){document.getElementById('pd-support-status').textContent=error.message;return}form.reset();await refreshSupport();showSupportConversation()};
  client().rpc('dating_mark_support_read').then(()=>{supportItems.forEach(x=>x.read_at=x.read_at||new Date().toISOString());renderContactList();window.PattayaNotifications?.refresh?.()});
 }
 
