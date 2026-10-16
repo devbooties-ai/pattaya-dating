@@ -1,0 +1,33 @@
+name: Deploy Pattaya Dating to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: pattaya-dating-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+      - name: Validate static site
+        run: |
+          test -s public/index.html
+          test -s public/manifest.webmanifest
+          test -s public/sw.js
+      - name: Deploy existing Pages project
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy public --project-name=pattaya-dating-demo --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
