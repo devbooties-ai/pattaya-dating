@@ -71,7 +71,7 @@ const draftDefaults={name:'',age:'',area:'Central Pattaya',bio:'',interests:'',l
 let accountDraft={...draftDefaults},accountView='profile',demoPhoto='';
 try{const stored=JSON.parse(localStorage.getItem('pd-profile-draft-v07')||'null');if(stored&&typeof stored==='object'){for(const k of Object.keys(draftDefaults)){if(typeof stored[k]==='string')accountDraft[k]=stored[k].slice(0,500)}}}catch(e){}
 function pdSaveDraft(){try{localStorage.setItem('pd-profile-draft-v07',JSON.stringify(accountDraft))}catch(e){}}
-function pdTab(t){accountView=t;renderProfile(document.getElementById('content'))}
+function pdTab(t){accountView=t;window.pdProfileTab=t;window.renderProfile(document.getElementById('content'))}
 function pdEscapeAttr(v){return escapeHtml(v??'')}
 function pdCollect(e){e.preventDefault();const f=e.currentTarget;const data=new FormData(f);for(const k of Object.keys(draftDefaults))accountDraft[k]=String(data.get(k)||'').trim().slice(0,k==='bio'?500:120);pdSaveDraft();accountView='profile';renderProfile(document.getElementById('content'));const a=document.getElementById('pd-feedback');if(a){a.textContent='Demo profile saved in this browser only. No account was created.';a.focus()}}
 function pdClear(){accountDraft={...draftDefaults};demoPhoto='';try{localStorage.removeItem('pd-profile-draft-v07')}catch(e){};renderProfile(document.getElementById('content'))}
