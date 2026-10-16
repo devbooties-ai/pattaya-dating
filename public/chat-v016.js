@@ -4,33 +4,65 @@ const auth=()=>window.PattayaAuth,client=()=>auth()?.getClient(),user=()=>auth()
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let selected=null,timer=null;
 function halt(){if(timer)clearInterval(timer);timer=null}
+let conversations=[],activeDemo=1;
 async function list(el){
  halt();
- if(!user()){window.renderDemoChats(el);return}
- el.innerHTML='<div class="real-chat-layout"><aside class="panel real-contacts"><h2>Messages</h2><p class="muted">Your real conversations</p><div id="live-chat-list">Loading…</div></aside><section class="panel real-chat-center"><div id="live-chat-window" class="real-chat-window"><div class="empty">Select a conversation on the left.</div></div></section><aside class="panel real-chat-side"><div id="real-chat-inspector"><h3>Member details</h3><p class="muted">Select a contact to see details and available actions.</p></div></aside></div>';
- const {data,error}=await client().rpc('dating_my_conversations');const target=document.getElementById('live-chat-list');if(!target)return;
- if(error){target.textContent=error.message;return}
- target.replaceChildren();
- if(!data?.length){target.textContent='No conversations yet. Open a real profile in Discover to send a request.';return}
- for(const c of data){const btn=document.createElement('button');btn.type='button';btn.className='real-contact'+(selected===c.id?' active':'');btn.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(c.status==='pending'?(c.incoming?'New request':'Awaiting acceptance'):c.status)+'</small></span>';btn.onclick=()=>openConversation(c);target.append(btn)}
- const match=data.find(x=>x.id===selected)||data[0];if(match)openConversation(match);
+ // Keep the established v0.6 three-column design for both demo and real chats.
+ el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><h2>Messages</h2><div class="chatContactCount">Demo contacts and live conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Demo contacts are labeled. Real requests appear here too.</div></aside><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
+ document.getElementById('unified-search').oninput=renderContactList;
+ if(user()){
+ const {data,error}=await client().rpc('dating_my_conversations');
+ if(!document.getElementById('unified-contacts'))return;
+ conversations=error?[]:(data||[]);
+ if(error)document.getElementById('unified-contacts').textContent=error.message;
+ }else conversations=[];
+ renderContactList();
+ const found=conversations.find(c=>c.id===selected);
+ if(found)openConversation(found);else openDemo(activeDemo);
+}
+function renderContactList(){
+ const box=document.getElementById('unified-contacts');if(!box)return;
+ const q=(document.getElementById('unified-search')?.value||'').toLowerCase();
+ box.replaceChildren();
+ const demos=[{id:1,name:'Mali',age:28},{id:2,name:'Niran',age:33}];
+ for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
+  const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');b.innerHTML='<span class="contactAvatar">'+p.name[0]+'</span><span class="contactData"><strong>'+p.name+', '+p.age+'</strong><small>Demo conversation</small></span>';b.onclick=()=>openDemo(p.id);box.append(b);
+ }
+ for(const c of conversations.filter(c=>c.display_name.toLowerCase().includes(q))){
+  const b=document.createElement('button');b.className='chatitem'+(selected===c.id?' selected':'');
+  b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(c.status==='pending'?(c.incoming?'● New request':'Request sent'):c.status==='accepted'?'Live conversation':'Declined')+'</small></span>';
+  b.onclick=()=>openConversation(c);box.append(b);
+ }
+}
+function openDemo(id){
+ halt();selected=null;activeDemo=id;renderContactList();
+ // Use the original, established chat content as a template, without switching pages.
+ const p=(id===1?{name:'Mali',age:28,area:'Jomtien'}:{name:'Niran',age:33,area:'Central Pattaya'});
+ const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
+ center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+p.name[0]+'</span><div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
+ side.innerHTML='<div class="inspectorAvatar">'+p.name[0]+'</div><div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
+ const demoData=(id===1?[{mine:false,text:'สวัสดีค่ะ ยินดีที่ได้รู้จัก! (Hello, nice to meet you!)'},{mine:true,text:'Hi! Nice to meet you too. How is your day?'}]:[{mine:false,text:'Hi! Great to meet you here.'}]);
+ window.pdDemoMessages=window.pdDemoMessages||{};const arr=window.pdDemoMessages[id]||(window.pdDemoMessages[id]=demoData);
+ const draw=()=>{const log=document.getElementById('unified-demo-log');if(!log)return;log.replaceChildren();for(const m of arr){const bubble=document.createElement('div');bubble.className='bubble'+(m.mine?' mine':'');bubble.textContent=m.text;log.append(bubble)}log.scrollTop=log.scrollHeight};draw();
+ document.getElementById('unified-demo-compose').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;arr.push({mine:true,text:f.querySelector('input').value.trim()});f.reset();draw()};
+ for(const el of ['demo-gift','demo-side-gift'])document.getElementById(el).onclick=()=>window.openGiftShop?.(id);
+ for(const el of ['demo-video','demo-side-video'])document.getElementById(el).onclick=()=>window.openVideoCall?.(id);
 }
 async function openConversation(c){
- halt();selected=c.id;
- document.querySelectorAll('.real-contact').forEach(b=>b.classList.toggle('active',b.textContent.includes(c.display_name)));
- const el=document.getElementById('live-chat-window');if(!el)return;
- el.innerHTML='<header class="real-chat-header"><span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><div><h3>'+esc(c.display_name)+'</h3><small>'+esc(c.status==='pending'?'Message request':c.status)+'</small></div></header><div id="live-messages" class="chatlog">Loading…</div><div id="live-chat-actions"></div><p id="live-chat-note" role="status" class="pd-help"></p>';
+ halt();selected=c.id;renderContactList();
+ const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
+ center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><div><h2>'+esc(c.display_name)+'</h2><span class="chatSub">'+esc(c.status==='pending'?'Message request · Live member':'Live member · '+c.status)+'</span></div></header><div class="chatlog" id="live-messages">Loading…</div><div id="live-chat-actions"></div><p id="live-chat-note" class="microcopy" role="status"></p>';
  const actions=document.getElementById('live-chat-actions');
- if(c.status==='pending'&&c.incoming){for(const action of ['accepted','declined']){const b=document.createElement('button');b.className='pd-outline';b.textContent=action==='accepted'?'Accept request':'Decline request';b.onclick=async()=>{const {error}=await client().rpc('dating_set_request',{conv_id:c.id,action});if(error)alert(error.message);else list(document.getElementById('content'))};actions.append(b)}}
- if(c.status==='accepted'){actions.innerHTML='<form id="live-send-form" class="composer"><input name="body" maxlength="2000" required placeholder="Write a message…"><button class="primary">Send</button></form>';document.getElementById('live-send-form').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,body=f.elements.body.value.trim();if(!body)return;const {error}=await client().rpc('dating_send_message',{target:c.other_id,message_body:body});if(error)document.getElementById('live-chat-note').textContent=error.message;else{f.reset();await loadMessages(c.id)}}}
- if(c.status==='pending'&&!c.incoming)actions.textContent='Request sent. Waiting for acceptance.';
- if(c.status==='declined')actions.textContent='Request declined.';
- const inspector=document.getElementById('real-chat-inspector');
- if(inspector){inspector.replaceChildren();const heading=document.createElement('h3');heading.textContent=c.display_name;inspector.append(heading);const desc=document.createElement('p');desc.className='muted';desc.textContent='Real member · '+c.status;inspector.append(desc);
- const gift=document.createElement('button');gift.className='pd-outline';gift.textContent='🎁 Virtual gifts · Demo only';gift.onclick=()=>alert('Gift purchases and delivery for real accounts are not active yet.');
- const video=document.createElement('button');video.className='pd-outline';video.textContent='◉ Video call · Demo only';video.onclick=()=>alert('Real video calling is not available yet. Consent and WebRTC will be implemented later.');
- const block=document.createElement('button');block.className='pd-danger';block.textContent='Block this member';block.onclick=async()=>{if(!confirm('Block this member and hide the conversation?'))return;const {error}=await client().from('member_blocks').insert({blocker_id:user(),blocked_id:c.other_id});if(error)alert(error.message);else{selected=null;list(document.getElementById('content'))}};
- inspector.append(gift,video,block);const note=document.createElement('p');note.className='pd-help';note.textContent='Coins and video calling are preview features, not active for real members.';inspector.append(note)}
+ if(c.status==='pending'&&c.incoming){
+  for(const action of ['accepted','declined']){const b=document.createElement('button');b.className='pd-outline';b.textContent=action==='accepted'?'Accept request':'Decline request';b.onclick=async()=>{const {error}=await client().rpc('dating_set_request',{conv_id:c.id,action});if(error)alert(error.message);else list(document.getElementById('content'))};actions.append(b)}
+ }else if(c.status==='accepted'){
+  actions.innerHTML='<form id="live-send-form" class="composer"><input name="body" maxlength="2000" required placeholder="Write a message…"><button class="primary">Send</button></form>';
+  document.getElementById('live-send-form').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,body=f.elements.body.value.trim();if(!body)return;const {error}=await client().rpc('dating_send_message',{target:c.other_id,message_body:body});if(error)document.getElementById('live-chat-note').textContent=error.message;else{f.reset();await loadMessages(c.id)}};
+ }else actions.textContent=c.status==='pending'?'Waiting for acceptance.':'Request declined.';
+ side.innerHTML='<div class="inspectorAvatar">'+esc(c.display_name[0]||'?')+'</div><div class="inspectorName">'+esc(c.display_name)+'</div><div class="inspectorMeta">Real member · '+esc(c.status)+'</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="live-gift">🎁 Gifts · Demo</button><button class="lightbtn video-btn" id="live-video">◉ Video · Demo</button><button class="lightbtn" id="live-block">Block this member</button></div><p class="microcopy">Gifts and video calls for real users are not yet available.</p>';
+ document.getElementById('live-gift').onclick=()=>alert('Virtual gifts for real members are not active yet.');
+ document.getElementById('live-video').onclick=()=>alert('Real video calls are not available yet.');
+ document.getElementById('live-block').onclick=async()=>{if(!confirm('Block this member?'))return;const {error}=await client().from('member_blocks').insert({blocker_id:user(),blocked_id:c.other_id});if(error)alert(error.message);else{selected=null;list(document.getElementById('content'))}};
  await loadMessages(c.id);
  timer=setInterval(()=>{if(document.getElementById('live-messages')&&user())loadMessages(c.id);else halt()},4000);
 }
@@ -44,4 +76,5 @@ window.datingOpenChats=function(){window.go('chats')};
 window.datingStartConversation=async function(target){if(!user())return alert('Please sign in first.');const msg=prompt('First message (request):');if(!msg?.trim())return;const {error}=await client().rpc('dating_send_message',{target,message_body:msg.trim()});if(error)alert(error.message);else window.go('chats')};
 window.renderDemoChats=window.renderChats;
 window.renderChats=function(el){list(el)};
+window.PattayaChat={refresh:()=>{if(document.getElementById('unified-contacts'))list(document.getElementById('content'))}};
 })();
