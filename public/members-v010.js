@@ -17,5 +17,5 @@ async function browse(el){
  if(!data.length){out.textContent='No approved profiles match yet. Profiles require explicit moderation approval before appearing here.';return}
  out.replaceChildren();const wrap=document.createElement('div');wrap.className='pd-member-results';for(const p of data){const b=document.createElement('button');b.type='button';b.className='pd-member-row pd-member-open';b.innerHTML='<div class="pd-member-avatar">♡</div><div><strong>'+esc(p.display_name)+', '+Number(p.age)+'</strong><div class="muted">'+esc(p.area)+' · '+esc(p.looking_for)+'</div><p>'+esc(p.bio).slice(0,220)+'</p><small>'+esc((p.interests||[]).join(' · '))+'</small></div>';b.onclick=()=>showRealProfile(p);wrap.append(b)}out.append(wrap);
 }
-window.renderDiscover=function(el){selectedRealProfile=null;browse(el)};
+window.renderDiscover=function(el){selectedRealProfile=null;if(location.hash==='#home'){original(el);return}browse(el)};
 })();
