@@ -44,14 +44,21 @@ function renderContactList(){
  const box=document.getElementById('unified-contacts');if(!box)return;
  const q=(document.getElementById('unified-search')?.value||'').toLowerCase();
  box.replaceChildren();
+ // Live contacts are sorted by latest activity. Sample contacts follow them.
+ const real=conversations.filter(c=>c.display_name.toLowerCase().includes(q)).sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+ for(const c of real){
+  const unread=Number(c.unread_count)||0,request=c.status==='pending'&&c.incoming;
+  const b=document.createElement('button');
+  b.className='chatitem pd-live-contact'+(selected===c.id?' selected':'')+(unread||request?' pd-contact-unread':'');
+  const preview=esc((c.last_message||'').slice(0,65));
+  b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(request?'New request':c.status==='pending'?'Request sent':c.status==='accepted'?'Live conversation':'Declined')+'</small><small>'+preview+'</small></span>'+(request?'<span class="pd-unread-dot" aria-label="New request"></span>':unread?'<span class="pd-unread-count">'+unread+'</span>':'');
+  b.onclick=()=>openConversation(c);box.append(b);
+ }
  const demos=[{id:1,name:'Mali',age:28},{id:2,name:'Niran',age:33}];
  for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
-  const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');b.innerHTML='<span class="contactAvatar">'+p.name[0]+'</span><span class="contactData"><strong>'+p.name+', '+p.age+'</strong><small>Demo conversation</small></span>';b.onclick=()=>openDemo(p.id);box.append(b);
- }
- for(const c of conversations.filter(c=>c.display_name.toLowerCase().includes(q)).sort((a,b)=>((b.status==='pending'&&b.incoming?1:0)-(a.status==='pending'&&a.incoming?1:0))||Number(b.unread_count||0)-Number(a.unread_count||0)||new Date(b.updated_at)-new Date(a.updated_at))){
-  const b=document.createElement('button');b.className='chatitem'+(selected===c.id?' selected':'');
-  b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(c.status==='pending'?(c.incoming?'● New request':'Request sent'):c.status==='accepted'?'Live conversation':'Declined')+(Number(c.unread_count)>0?' · '+Number(c.unread_count)+' unread':'')+'</small><small>'+esc((c.last_message||'').slice(0,65))+'</small></span>';
-  b.onclick=()=>openConversation(c);box.append(b);
+  const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');
+  b.innerHTML='<span class="contactAvatar">'+p.name[0]+'</span><span class="contactData"><strong>'+p.name+', '+p.age+'</strong><small>Demo conversation</small></span>';
+  b.onclick=()=>openDemo(p.id);box.append(b);
  }
 }
 function openDemo(id){
@@ -70,7 +77,7 @@ function openDemo(id){
 }
 async function openConversation(c){
  halt();selected=c.id;renderContactList();
- await client().rpc('dating_mark_read',{conv_id:c.id});refreshContacts();
+ if(c.status==='accepted'){const {error:readError}=await client().rpc('dating_mark_read',{conv_id:c.id});if(!readError){c.unread_count=0;renderContactList();window.PattayaNotifications?.refresh?.()}}
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><div><h2>'+esc(c.display_name)+'</h2><span class="chatSub">'+esc(c.status==='pending'?'Message request · Live member':'Live member · '+c.status)+'</span></div></header><div class="chatlog" id="live-messages">Loading…</div><div id="live-chat-actions"></div><p id="live-chat-note" class="microcopy" role="status"></p>';
  const actions=document.getElementById('live-chat-actions');
@@ -91,7 +98,7 @@ async function loadMessages(id){
  const el=document.getElementById('live-messages');if(!el)return;
  const {data,error}=await client().from('member_messages').select('sender_id,body,created_at').eq('conversation_id',id).order('created_at',{ascending:true}).limit(200);
  if(!el.isConnected)return;if(error){el.textContent=error.message;return}
- el.replaceChildren();for(const m of data||[]){const b=document.createElement('div');b.className='bubble'+(m.sender_id===user()?' mine':'');b.textContent=m.body;el.append(b)}el.scrollTop=el.scrollHeight;if(selected===id&&document.visibilityState==='visible')await client().rpc('dating_mark_read',{conv_id:id});
+ el.replaceChildren();for(const m of data||[]){const b=document.createElement('div');b.className='bubble'+(m.sender_id===user()?' mine':'');b.textContent=m.body;el.append(b)}el.scrollTop=el.scrollHeight;if(selected===id&&document.visibilityState==='visible'){const {error:readError}=await client().rpc('dating_mark_read',{conv_id:id});if(!readError){const item=conversations.find(x=>x.id===id);if(item){item.unread_count=0;renderContactList()}window.PattayaNotifications?.refresh?.()}}
 }
 window.datingOpenChats=function(){window.go('chats')};
 window.datingStartConversation=async function(target){if(!user())return alert('Please sign in first.');const msg=prompt('First message (request):');if(!msg?.trim())return;const {error}=await client().rpc('dating_send_message',{target,message_body:msg.trim()});if(error)alert(error.message);else window.go('chats')};
