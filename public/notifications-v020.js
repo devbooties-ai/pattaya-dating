@@ -26,8 +26,8 @@ async function check(){
   const {data,error}=await client.rpc('dating_my_conversations');
   if(error)return;
   const results=data||[];
-  lastUnread=results.reduce((sum,c)=>sum+Math.max(0,Number(c.unread_count)||0),0);
-  lastRequests=results.filter(c=>c.status==='pending'&&c.incoming).length;
+  lastUnread=results.filter(c=>c.status!=='pending').reduce((sum,c)=>sum+Math.max(0,Number(c.unread_count)||0),0);
+  lastRequests=results.filter(c=>c.status==='pending'&&c.incoming&&Number(c.unread_count||0)>0).length;
   lastUser=id;paint();
  }catch(e){/* keep current badge when temporarily offline */}finally{busy=false}
 }
