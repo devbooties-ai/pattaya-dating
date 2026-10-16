@@ -2,7 +2,7 @@
 (function(){
 const auth=()=>window.PattayaAuth,client=()=>auth()?.getClient(),user=()=>auth()?.getSession()?.user?.id;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let selected=null,timer=null,contactsTimer=null,contactRefreshBusy=false;
+let selected=null,timer=null,contactsTimer=null,contactRefreshBusy=false,realtimeChannel=null,realtimeUser=null;
 function halt(){if(timer)clearInterval(timer);timer=null}
 let conversations=[],activeDemo=1;
 async function list(el){
@@ -19,13 +19,26 @@ async function list(el){
  renderContactList();
  const found=conversations.find(c=>c.id===selected);
  if(found)openConversation(found);else openDemo(activeDemo);
- contactsTimer=setInterval(refreshContacts,7000);
+ contactsTimer=setInterval(refreshContacts,12000);attachRealtime();
 }
 async function refreshContacts(){
  if(contactRefreshBusy||!document.getElementById('unified-contacts')||!user()){if(!document.getElementById('unified-contacts')&&contactsTimer){clearInterval(contactsTimer);contactsTimer=null}return}
  contactRefreshBusy=true;
  try{const {data,error}=await client().rpc('dating_my_conversations');if(!error&&document.getElementById('unified-contacts')){const previous=conversations;conversations=data||[];renderContactList();const total=conversations.reduce((n,c)=>n+Number(c.unread_count||0),0);const nav=document.querySelector('#sidebarNav .nav:nth-child(3)');if(nav){nav.title=total?total+' unread messages':'Chats';nav.setAttribute('aria-label',total?'Chats, '+total+' unread':'Chats')};const active=conversations.find(c=>c.id===selected);if(active&&previous.find(c=>c.id===selected)?.status!==active.status)openConversation(active)}}
  finally{contactRefreshBusy=false}
+}
+function attachRealtime(){
+ const uid=user();
+ if(!uid){if(realtimeChannel){client()?.removeChannel(realtimeChannel);realtimeChannel=null;realtimeUser=null}return}
+ if(realtimeChannel&&realtimeUser===uid)return;
+ if(realtimeChannel)client().removeChannel(realtimeChannel);
+ realtimeUser=uid;
+ realtimeChannel=client().channel('dating-chat-changes-'+uid)
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'member_messages'},payload=>{
+  if(document.getElementById('unified-contacts')){refreshContacts();if(selected===payload.new.conversation_id)loadMessages(selected)}
+ })
+ .on('postgres_changes',{event:'UPDATE',schema:'public',table:'member_conversations'},()=>{if(document.getElementById('unified-contacts'))refreshContacts()})
+ .subscribe();
 }
 function renderContactList(){
  const box=document.getElementById('unified-contacts');if(!box)return;
