@@ -97,5 +97,5 @@ window.datingOpenChats=function(){window.go('chats')};
 window.datingStartConversation=async function(target){if(!user())return alert('Please sign in first.');const msg=prompt('First message (request):');if(!msg?.trim())return;const {error}=await client().rpc('dating_send_message',{target,message_body:msg.trim()});if(error)alert(error.message);else window.go('chats')};
 window.renderDemoChats=window.renderChats;
 window.renderChats=function(el){list(el)};
-window.PattayaChat={refresh:()=>{if(document.getElementById('unified-contacts'))list(document.getElementById('content'))}};
+window.PattayaChat={refresh:()=>{if(location.hash==='#chats'||document.getElementById('pageTitle')?.textContent==='Chats'){const root=document.getElementById('content');if(root)list(root)}}};
 })();
