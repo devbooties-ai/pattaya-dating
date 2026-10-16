@@ -7,8 +7,8 @@ let client,session=null,mode='signup';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const status=(msg,bad=false)=>{const e=$('pd-real-status');if(e){e.textContent=msg;e.style.color=bad?'#b91c1c':'#4e627c'}};
-function ready(){if(!window.supabase?.createClient)return false;if(!client){client=window.supabase.createClient(URL,KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});client.auth.onAuthStateChange((_event,s)=>{session=s; window.PattayaChat?.refresh?.(); if(document.getElementById('pageTitle')?.textContent==='Profile')setTimeout(renderAccount,0)})}return true}
-async function loadSession(){if(!ready())return;const {data}=await client.auth.getSession();session=data.session;window.PattayaChat?.refresh?.();if(document.getElementById('pageTitle')?.textContent==='Profile')renderAccount()}
+function ready(){if(!window.supabase?.createClient)return false;if(!client){client=window.supabase.createClient(URL,KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});client.auth.onAuthStateChange((_event,s)=>{session=s; window.PattayaChat?.refresh?.(); if(document.getElementById('pageTitle')?.textContent==='Profile' && window.pdProfileTab==='account')setTimeout(renderAccount,0)})}return true}
+async function loadSession(){if(!ready())return;const {data}=await client.auth.getSession();session=data.session;window.PattayaChat?.refresh?.();if(document.getElementById('pageTitle')?.textContent==='Profile' && window.pdProfileTab==='account')renderAccount()}
 function renderAccount(){
  const root=$('content');if(!root||document.getElementById('pageTitle')?.textContent!=='Profile')return;
  const box=document.createElement('section');box.className='panel';box.style.maxWidth='1000px';
@@ -91,7 +91,7 @@ async function deletePhoto(p){
 }
 
 const previous=window.renderProfile;
-window.renderProfile=function(el){accountView='account';renderAccount()};
+window.renderProfile=function(el){if(window.pdProfileTab==='account'){renderAccount()}else{previous(el)}};
 window.PattayaAuth={getClient:()=>ready()?client:null,getSession:()=>session};
 window.addEventListener('load',loadSession);
 })();
