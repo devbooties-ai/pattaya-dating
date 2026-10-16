@@ -28,6 +28,7 @@ async function check(){
   const results=data||[];
   lastUnread=results.filter(c=>c.status!=='pending').reduce((sum,c)=>sum+Math.max(0,Number(c.unread_count)||0),0);
   lastRequests=results.filter(c=>c.status==='pending'&&c.incoming&&Number(c.unread_count||0)>0).length;
+  const support=await client.from('support_messages').select('id',{count:'exact',head:true}).eq('user_id',id).is('read_at',null);if(!support.error)lastRequests+=support.count||0;
   lastUser=id;paint();
  }catch(e){/* keep current badge when temporarily offline */}finally{busy=false}
 }
