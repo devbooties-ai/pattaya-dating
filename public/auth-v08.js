@@ -84,5 +84,6 @@ async function deletePhoto(p){
 
 const previous=window.renderProfile;
 window.renderProfile=function(el){accountView='account';renderAccount()};
+window.PattayaAuth={getClient:()=>ready()?client:null,getSession:()=>session};
 window.addEventListener('load',loadSession);
 })();
