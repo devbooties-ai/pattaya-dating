@@ -6,6 +6,7 @@ let selected=null,timer=null,contactsTimer=null,contactRefreshBusy=false,realtim
 function halt(){if(timer)clearInterval(timer);timer=null}
 let conversations=[],activeDemo=1;
 try{window.pdDemoMessages=Object.assign({},JSON.parse(sessionStorage.getItem('pd-demo-messages')||'{}'),window.pdDemoMessages||{})}catch(e){window.pdDemoMessages=window.pdDemoMessages||{}}
+try{window.pdDemoActivity=JSON.parse(sessionStorage.getItem('pd-demo-activity')||'{}')}catch(e){window.pdDemoActivity={}}
 const demoPeople=()=>window.pdDemoProfiles||[{id:1,name:'Mali',age:28,area:'Jomtien'}];
 const demoPhoto=id=>'./assets/social-2026/demo-profile-'+String(({1:1,2:5,3:2,4:6,5:3,6:7,7:4,8:8})[id]||1).padStart(2,'0')+'.webp';
 const demoAvatar=(p,side=false)=>'<span class="'+(side?'inspectorAvatar':'contactAvatar')+' pd-photo-avatar"><img src="'+demoPhoto(p.id)+'" alt="'+esc(p.name)+' demo portrait" loading="lazy"></span>';
@@ -95,11 +96,11 @@ function renderContactList(){
   b.onclick=()=>openConversation(c);box.append(b);
  }
  if(supportItems.length&&'Pattaya Dating Support'.toLowerCase().includes(q)){const unread=supportItems.filter(m=>!m.read_at).length;const b=document.createElement('button');b.className='chatitem'+(activeDemo===0?' selected':'')+(unread?' pd-contact-unread':'');b.innerHTML='<span class="contactAvatar">♥</span><span class="contactData"><strong>Pattaya Dating Support</strong><small>'+esc(supportItems[supportItems.length-1].body.slice(0,58))+'</small></span>'+(unread?'<span class="pd-unread-count">'+unread+'</span>':'');b.onclick=showSupportConversation;box.prepend(b)}
- const demos=demoPeople();
+ const demos=demoPeople().slice().sort((a,b)=>{const latest=x=>Number(window.pdDemoActivity?.[x.id]||0);return latest(b)-latest(a)});
  for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
   const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');
   b.innerHTML=demoAvatar(p)+'<span class="contactData"><strong>'+esc(p.name)+', '+p.age+'</strong><small>'+esc((window.pdDemoMessages?.[p.id]||[]).at(-1)?.text||'Demo conversation')+'</small></span>';
-  b.onclick=()=>openDemo(p.id);box.append(b);if(!selected&&activeDemo===p.id)box.prepend(b);
+  b.onclick=()=>openDemo(p.id);box.append(b);
  }
 }
 function addChatDesignDetails(){
@@ -116,13 +117,13 @@ function openDemo(id){
  // Use the original, established chat content as a template, without switching pages.
  const p=demoPeople().find(person=>person.id===id)||demoPeople()[0];
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
- center.innerHTML='<header class="chat-head">'+demoAvatar(p)<div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
- side.innerHTML=demoAvatar(p,true)<div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
+ center.innerHTML='<header class="chat-head">'+demoAvatar(p)+'<div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
+ side.innerHTML=demoAvatar(p,true)+'<div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
  addChatDesignDetails();
  const demoData=[];
  window.pdDemoMessages=window.pdDemoMessages||{};const arr=window.pdDemoMessages[id]||(window.pdDemoMessages[id]=demoData);
  const draw=()=>{const log=document.getElementById('unified-demo-log');if(!log)return;log.replaceChildren();for(const m of arr){const bubble=document.createElement('div');bubble.className='bubble'+(m.mine?' mine':'');bubble.textContent=m.text;log.append(bubble)}log.scrollTop=log.scrollHeight};draw();
- document.getElementById('unified-demo-compose').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;arr.push({mine:true,text:f.querySelector('input').value.trim()});try{sessionStorage.setItem('pd-demo-messages',JSON.stringify(window.pdDemoMessages))}catch(e){}f.reset();draw();renderContactList()};
+ document.getElementById('unified-demo-compose').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;arr.push({mine:true,text:f.querySelector('input').value.trim()});window.pdDemoActivity=window.pdDemoActivity||{};window.pdDemoActivity[id]=Date.now();try{sessionStorage.setItem('pd-demo-activity',JSON.stringify(window.pdDemoActivity))}catch(e){}try{sessionStorage.setItem('pd-demo-messages',JSON.stringify(window.pdDemoMessages))}catch(e){}f.reset();draw();renderContactList()};
  for(const el of ['demo-gift','demo-side-gift'])document.getElementById(el).onclick=()=>window.openGiftShop?.(id);
  for(const el of ['demo-video','demo-side-video'])document.getElementById(el).onclick=()=>window.openVideoCall?.(id);
 }
