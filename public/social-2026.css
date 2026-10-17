@@ -98,3 +98,17 @@ button,.pill,.filterBtn,.chatitem{transition:background .15s,border-color .15s,t
 .pd-chat-gift-items img{width:50px;height:48px;object-fit:cover;border-radius:10px}.pd-chat-gift-emoji{font-size:32px;height:48px;display:grid;place-items:center}
 .pd-chat-gift-items strong{font-size:10px;font-weight:700;color:#f8eaf9}
 .pd-chat-gift-preview p{font-size:10px;line-height:1.6;color:#e3cfe7;margin:0}
+
+/* Discover visual master refinement v1.4 */
+.pd-real-discover{padding:24px;background:transparent;border:0;box-shadow:none}
+.pd-discover-headline{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(110deg,#fff,#fff2f8);border:1px solid #f8dce8;border-radius:24px;padding:27px 30px;margin:-12px -12px 20px}
+.pd-discover-kicker{font-size:10px;font-weight:850;letter-spacing:2px;color:#e84c79}
+.pd-discover-headline h2{font-size:clamp(24px,2.8vw,36px);letter-spacing:-1.2px;margin:8px 0}.pd-discover-headline h2 span{color:#ff4e79}
+.pd-discover-headline p{color:#7e879a;font-size:14px;margin:0}.pd-discover-safe{flex-shrink:0;font-size:11px;font-weight:750;background:#fff;color:#60748b;padding:9px 13px;border-radius:999px;border:1px solid #e8eaf1}
+.pd-discover-segments{display:flex;gap:9px;margin:0 0 18px}.pd-discover-segments span{font-size:12px;border-radius:100px;background:white;border:1px solid #eef0f6;padding:9px 13px;color:#717b91;font-weight:700}.pd-discover-segments span:first-child{background:#ff4b75;border-color:#ff4b75;color:white}
+.pd-discover-count{font-weight:800;letter-spacing:-.3px;font-size:17px;margin:2px 0 16px;color:#1a2540}
+.pd-social-member-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.pd-social-member-visual{aspect-ratio:4/5}.pd-social-member-card{border-radius:23px}.pd-social-member-information strong{font-size:20px}
+.pd-social-member-information{padding:19px}.pd-social-open{margin-top:9px;padding:13px}.pd-social-member-card:hover{transform:translateY(-5px)}
+@media(max-width:1200px){.pd-social-member-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.pd-real-discover{padding:10px}.pd-discover-headline{padding:18px;margin:0 0 14px}.pd-discover-safe{display:none}.pd-social-member-grid{gap:12px}.pd-social-member-information{padding:12px}.pd-social-member-information strong{font-size:16px}}
