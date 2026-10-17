@@ -99,7 +99,7 @@ function renderContactList(){
  const demos=demoPeople().slice().sort((a,b)=>{const latest=x=>Number(window.pdDemoActivity?.[x.id]||0);return latest(b)-latest(a)});
  for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
   const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');
-  b.innerHTML=demoAvatar(p)+'<span class="contactData"><strong>'+esc(p.name)+', '+p.age+'</strong><small>'+esc((window.pdDemoMessages?.[p.id]||[]).at(-1)?.text||'Demo conversation')+'</small></span>';
+  b.innerHTML=demoAvatar(p)+'<span class="contactData"><strong>'+esc(p.name)+', '+p.age+' · Virtual</strong><small>'+esc((window.pdDemoMessages?.[p.id]||[]).at(-1)?.text||'Chat now for free · Demo AI conversation')+'</small></span>';
   b.onclick=()=>openDemo(p.id);box.append(b);
  }
 }
@@ -117,10 +117,11 @@ function openDemo(id){
  // Use the original, established chat content as a template, without switching pages.
  const p=demoPeople().find(person=>person.id===id)||demoPeople()[0];
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
- center.innerHTML='<header class="chat-head">'+demoAvatar(p)+'<div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
- side.innerHTML=demoAvatar(p,true)+'<div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
+ center.innerHTML='<header class="chat-head">'+demoAvatar(p)+'<div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Virtual member · Automated chat</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Chat now for free · Automated fictional character, not a real member. Messages stay in this browser session.</p>';
+ side.innerHTML=demoAvatar(p,true)+'<div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Virtual member</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
  addChatDesignDetails();
- const demoData=[];
+ const greetings=['Hi! 👋 How are you today?','Hey 😊 What brings you to Pattaya Dating?','Hello! How is your day going?','Hi there! 👋 Would you like to chat?'];
+ const demoData=[{mine:false,text:greetings[(id-1)%greetings.length]}];
  window.pdDemoMessages=window.pdDemoMessages||{};const arr=window.pdDemoMessages[id]||(window.pdDemoMessages[id]=demoData);
  const draw=()=>{const log=document.getElementById('unified-demo-log');if(!log)return;log.replaceChildren();for(const m of arr){const bubble=document.createElement('div');bubble.className='bubble'+(m.mine?' mine':'');bubble.textContent=m.text;log.append(bubble)}log.scrollTop=log.scrollHeight};draw();
  document.getElementById('unified-demo-compose').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;arr.push({mine:true,text:f.querySelector('input').value.trim()});window.pdDemoActivity=window.pdDemoActivity||{};window.pdDemoActivity[id]=Date.now();try{sessionStorage.setItem('pd-demo-activity',JSON.stringify(window.pdDemoActivity))}catch(e){}try{sessionStorage.setItem('pd-demo-messages',JSON.stringify(window.pdDemoMessages))}catch(e){}f.reset();draw();renderContactList()};
