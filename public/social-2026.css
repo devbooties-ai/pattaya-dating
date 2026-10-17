@@ -276,3 +276,35 @@ body.pd-compact-member-page .notice{font-size:10px;opacity:.7;margin-top:14px}
 .chatLayout .inspectorAvatar.pd-photo-avatar{width:108px;height:108px;border-radius:50%;margin:8px auto 12px;box-shadow:0 0 0 3px #ffe0eb,0 8px 21px #ee77972f}
 .chatLayout .pd-photo-avatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%}
 .chatLayout .chatitem.selected{border-color:#f5c4d3;background:#fff0f5}
+
+/* Messenger v2.7: no page scroll, persistent composer, independent contact/message scroll */
+@media(min-width:851px){
+html:has(body.pd-messenger-page){overflow:hidden}
+body.pd-messenger-page{height:100dvh;overflow:hidden}
+body.pd-messenger-page .app{height:100dvh;min-height:0;overflow:hidden}
+body.pd-messenger-page .sidebar{height:100dvh;min-height:0;overflow-y:auto}
+body.pd-messenger-page .shell{height:100dvh;min-height:0;display:flex;flex-direction:column;padding:12px 17px 10px;overflow:hidden;max-width:none;width:100%}
+body.pd-messenger-page .top{display:none}
+body.pd-messenger-page .notice{display:none}
+body.pd-messenger-page #content{display:flex;min-height:0;flex:1 1 auto;flex-direction:column;overflow:hidden}
+body.pd-messenger-page .pd-chat-banner{flex:0 0 auto;padding:9px 15px;margin-bottom:9px;border-radius:12px;font-size:12px}
+body.pd-messenger-page .chatLayout{flex:1 1 auto;min-height:0;height:100%;grid-template-columns:265px minmax(0,1fr) 250px;gap:11px;overflow:hidden;align-items:stretch}
+body.pd-messenger-page .chatLayout>.panel{height:100%;min-height:0;min-width:0;overflow:hidden;padding:13px;border-radius:16px}
+body.pd-messenger-page .chatContacts{display:flex;flex-direction:column}
+body.pd-messenger-page .chatContacts h2{font-size:18px;line-height:1.2}
+body.pd-messenger-page .chatContacts .chatContactCount{font-size:11px}
+body.pd-messenger-page .chatContacts .chatSearch{flex:0 0 auto}
+body.pd-messenger-page .chatContacts .chatitems{min-height:0;max-height:none;flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain}
+body.pd-messenger-page .chatMain{display:flex;flex-direction:column;gap:0}
+body.pd-messenger-page .chatMain .chat-head{flex:0 0 auto;min-height:52px;padding:4px 0 9px}
+body.pd-messenger-page .chatMain .chatlog{flex:1 1 auto;min-height:0;max-height:none;height:auto;overflow-y:auto;overscroll-behavior:contain;margin-top:6px}
+body.pd-messenger-page .chatMain .composer{flex:0 0 auto;margin-top:8px}
+body.pd-messenger-page .chatMain .microcopy,body.pd-messenger-page .chatMain #live-chat-note{flex:0 0 auto;margin:6px 0 0;font-size:10px}
+body.pd-messenger-page .chatMain #live-chat-actions{flex:0 0 auto}
+body.pd-messenger-page .chatInspector{overflow-y:auto!important;overscroll-behavior:contain}
+}
+@media(min-width:851px) and (max-width:1120px){
+body.pd-messenger-page .chatLayout{grid-template-columns:235px minmax(0,1fr) 215px}
+body.pd-messenger-page .chatLayout>.panel{padding:10px}
+}
+@media(max-width:850px){body.pd-messenger-page .top{display:none}body.pd-messenger-page .shell{padding-top:10px}}
