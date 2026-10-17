@@ -269,3 +269,10 @@ body.pd-compact-member-page .notice{font-size:10px;opacity:.7;margin-top:14px}
 .pd-profile4-actions{margin-top:-8px}.pd-profile4-content{gap:15px}
 @media(max-width:900px){.pd-profile4-online{flex-wrap:wrap}.pd-profile4-online-people{order:3;flex:1 0 100%}}
 @media(max-width:700px){.pd-profile4-online{gap:10px}.pd-profile4-online-people{order:0;flex:1 0 100%}.pd-profile4-online>div:first-child{flex:1}}
+
+/* Chat profile photographs instead of initial-based avatars */
+.chatLayout .pd-photo-avatar{overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;background:#e8e7ef;border:2px solid #fff}
+.chatLayout .contactAvatar.pd-photo-avatar{width:45px;height:45px;border-radius:50%}
+.chatLayout .inspectorAvatar.pd-photo-avatar{width:108px;height:108px;border-radius:50%;margin:8px auto 12px;box-shadow:0 0 0 3px #ffe0eb,0 8px 21px #ee77972f}
+.chatLayout .pd-photo-avatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.chatLayout .chatitem.selected{border-color:#f5c4d3;background:#fff0f5}
