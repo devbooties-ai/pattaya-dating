@@ -308,3 +308,7 @@ body.pd-messenger-page .chatLayout{grid-template-columns:235px minmax(0,1fr) 215
 body.pd-messenger-page .chatLayout>.panel{padding:10px}
 }
 @media(max-width:850px){body.pd-messenger-page .top{display:none}body.pd-messenger-page .shell{padding-top:10px}}
+
+/* Transparent virtual profiles — free chat beta */
+.member{position:relative}.pd-virtual-card-label{position:absolute;top:10px;left:10px;z-index:2;background:#14233de8;color:white;border-radius:7px;padding:5px 8px;font-size:9px;font-weight:800;letter-spacing:.8px}
+.chatLayout .chatContactCount{font-size:11px}.chatLayout .chatSub{line-height:1.4}
