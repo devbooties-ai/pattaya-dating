@@ -55,3 +55,12 @@ button,.pill,.filterBtn,.chatitem{transition:background .15s,border-color .15s,t
 #real-search{border:1px solid #e8edf4;padding:18px;border-radius:18px;background:#fafbfe}#real-results{margin-top:19px}
 .pd-discover-intro{background-image:linear-gradient(110deg,#ffffffee,#fff0f8e9),url('./assets/social-2026/gift-diamond.webp');background-position:right center;background-size:auto,200px auto;background-repeat:no-repeat}
 @media(max-width:1150px){.pd-social-member-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.pd-social-member-grid{grid-template-columns:1fr 1fr;gap:11px}.pd-social-member-information{padding:11px}.pd-social-avatar{width:76px;height:76px;font-size:43px}.pd-social-member-information strong{font-size:15px}}
+
+/* Individually generated neutral WebP artwork for profiles without approved photographs */
+.pd-social-member-card:nth-child(4n+1) .pd-social-member-visual{background:#fbe8ee url('./assets/social-2026/profile-placeholder-rose.webp') center / cover no-repeat}
+.pd-social-member-card:nth-child(4n+2) .pd-social-member-visual{background:#ebe7fa url('./assets/social-2026/profile-placeholder-lilac.webp') center / cover no-repeat}
+.pd-social-member-card:nth-child(4n+3) .pd-social-member-visual{background:#fff0de url('./assets/social-2026/profile-placeholder-peach.webp') center / cover no-repeat}
+.pd-social-member-card:nth-child(4n) .pd-social-member-visual{background:#e6eefb url('./assets/social-2026/profile-placeholder-blue.webp') center / cover no-repeat}
+.pd-social-member-visual .pd-social-avatar{width:78px;height:78px;font-size:38px;border:2px solid #fff9;position:absolute;left:14px;bottom:14px;background:#ffffffc4;z-index:2}
+.pd-social-member-visual .pd-social-illustration-label{position:absolute;right:12px;bottom:14px;z-index:2;background:#17223cba;color:white;border-radius:100px;padding:6px 9px;font-size:10px;letter-spacing:.2px}
+@media(max-width:650px){.pd-social-member-visual .pd-social-avatar{width:52px;height:52px;font-size:25px;left:8px;bottom:8px}.pd-social-member-visual .pd-social-illustration-label{font-size:8px;right:6px;bottom:9px}}
