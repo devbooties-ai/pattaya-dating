@@ -112,3 +112,25 @@ button,.pill,.filterBtn,.chatitem{transition:background .15s,border-color .15s,t
 .pd-social-member-information{padding:19px}.pd-social-open{margin-top:9px;padding:13px}.pd-social-member-card:hover{transform:translateY(-5px)}
 @media(max-width:1200px){.pd-social-member-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.pd-real-discover{padding:10px}.pd-discover-headline{padding:18px;margin:0 0 14px}.pd-discover-safe{display:none}.pd-social-member-grid{gap:12px}.pd-social-member-information{padding:12px}.pd-social-member-information strong{font-size:16px}}
+
+/* Discover v1.5 — approved reference proportions and card overlays */
+.discoverLayout{grid-template-columns:minmax(0,1fr) 294px;gap:16px}
+.discoverMain .cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.discoverMain .member{border-radius:15px}
+.discoverMain .member .portrait{aspect-ratio:4/5}
+.discoverMain .memberBody{padding:11px 12px 13px}
+.discoverMain .memberHead{display:flex;align-items:baseline;gap:6px}
+.discoverMain .memberName{font-size:15px}
+.discoverMain .location{margin:4px 0 11px}
+.discoverMain .member .actions .msg{background:linear-gradient(90deg,#f91f6a,#ff457f);color:white;border-radius:99px;padding:11px 4px;box-shadow:none}
+.discoverMain .member .actions .heart{border-radius:50%;background:#fff0f5;border:0;flex:0 0 37px}
+.discoverMain .member:hover .portrait{filter:saturate(1.06)}
+.discoverMain .member .online{background:#16aa69;color:white;font-size:11px;border:0;box-shadow:0 4px 12px #061f1b26}
+.discoverMain .member .online .dot{background:#d2ffe0}
+.discoverMain .toolbar{padding:11px;border-radius:14px}
+.discoverMain .chips{margin-top:18px}
+.pd-discover-rail .pd-rail-card{padding:16px;border-radius:16px}
+.pd-discover-rail .pd-premium-card{min-height:263px}
+@media(max-width:1450px){.discoverMain .cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1110px){.discoverMain .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:780px){.discoverLayout{grid-template-columns:1fr}.discoverMain .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
