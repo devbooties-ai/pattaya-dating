@@ -57,10 +57,35 @@ function backToMembers(){profileId=null;page=previousPage||'discover';render();w
 function choosePhoto(i){photoIndex=i;renderMemberDetail(document.getElementById('content'))}
 function profileLike(id){if(liked.has(id))liked.delete(id);else liked.add(id);renderMemberDetail(document.getElementById('content'))}
 function demoReport(){alert('This is a fictional demo member. Reporting and blocking will be available once real accounts and moderation are connected.');}
-function renderMemberDetail(el){const p=people.find(x=>x.id===profileId);if(!p){backToMembers();return}const interests=p.gender==='woman'?['Coffee & cafés','Travel','Music','Cooking','Beach walks']:['Travel','Good food','Fitness','Movies','Exploring Pattaya'];const shots=[{title:'Demo portrait',offset:0},{title:'Portrait detail (demo crop)',offset:1},{title:'Alternate demo view',offset:2}];const photo=(i)=>`<div class="portrait" style="background:${p.bg};height:100%;aspect-ratio:auto">${portrait(p).replace(/^<div class="portrait"[^>]*>/,'').replace(/<span class="online">[\s\S]*?<\/span><\/div>$/,'</div>')}</div>`;
- el.innerHTML=`<div class="fullProfile"><button class="backLink" onclick="backToMembers()">← Back to members</button><div class="profilePage"><div class="profileMain"><div class="profileGallery"><div class="profilePhotoMain">${portrait(p)}<span class="photoCaption">${photoIndex+1} / 3 · demo portrait</span></div><div class="galleryThumbs">${shots.map((sh,i)=>`<button class="galleryThumb ${i===photoIndex?'current':''}" aria-label="${sh.title}" onclick="choosePhoto(${i})">${portrait(p)}</button>`).join('')}</div></div><p class="galleryNote">Fictional demo profile with a synthetic portrait. Thumbnails reuse this image; registered members upload their own photos.</p><section class="memberDetail"><div class="detailHead"><h2>${escapeHtml(p.name)}, ${p.age}</h2>${p.verified?'<span class="detailTag">✓ Demo verified</span>':''}</div><div class="detailLine">⌖ ${escapeHtml(p.area)}, Pattaya ${p.online?' · ● Online (demo)':''}</div><div class="detailSection"><h3>About me</h3><p>Hi, I enjoy meaningful conversations, exploring Pattaya and meeting friendly people. I am here to connect and get to know someone at a comfortable pace. This is a fictional biography for testing the design.</p></div><div class="detailSection"><h3>Interests</h3><div class="interestList">${interests.map(x=>`<span class="interestTag">${x}</span>`).join('')}</div></div><div class="detailSection"><h3>Looking for</h3><p>Dating and meaningful connections</p></div></section></div><aside class="profileAside"><div class="quickPanel"><h3>Connect with ${escapeHtml(p.name)}</h3><p>Send a message, or save this fictional profile to your likes.</p><button class="profileAction" onclick="startChat(${p.id})">✉ Send message</button><button class="profileAction secondary" onclick="openGiftShop(${p.id})">🎁 Send virtual gift</button><button class="profileAction secondary" onclick="openVideoCall(${p.id})">◉ Video call</button><button class="profileAction secondary" onclick="profileLike(${p.id})">${liked.has(p.id)?'♥ Liked · Remove like':'♡ Add to likes'}</button><div class="demoBanner">Preview mode: likes and messages are only stored in the open browser session.</div></div><div class="quickPanel"><h3>Profile details</h3><div class="infoRow"><span>Location</span><b>${escapeHtml(p.area)}</b></div><div class="infoRow"><span>Age</span><b>${p.age}</b></div><div class="infoRow"><span>Verification</span><b>${p.verified?'Demo badge':'Not verified'}</b></div><div class="infoRow"><span>Account type</span><b>Sample profile</b></div><button class="safeAction" onclick="demoReport()">Report profile</button><button class="safeAction" onclick="demoReport()">Block profile</button></div></aside></div></div>`;
- // Illustrations deliberately stay consistent while the viewer can select the gallery state.
- const large=el.querySelector('.profilePhotoMain .portrait svg');if(large){large.style.transform=['scale(1)','scale(1.24)','scale(1.1) translateX(-3%)'][photoIndex];large.style.transition='transform .25s ease'}
+function renderMemberDetail(el){
+ const p=people.find(x=>x.id===profileId);if(!p){backToMembers();return}
+ const interests=['Coffee & cafés','Travel','Music','Food','Beach walks'];
+ const photoId=({1:1,2:5,3:2,4:6,5:3,6:7,7:4,8:8})[p.id];
+ const pic='./assets/social-2026/demo-profile-'+String(photoId).padStart(2,'0')+'.webp';
+ el.innerHTML=`<div class="fullProfile pd-detail-v2">
+  <button class="backLink" onclick="backToMembers()">← Back to Discover</button>
+  <div class="pd-detail-grid">
+   <section class="pd-detail-photo-wrap"><div class="pd-detail-photo">
+    <img src="${pic}" alt="Portrait of fictional demo profile ${escapeHtml(p.name)}" loading="eager">
+    <span class="pd-detail-photo-tag">SAMPLE PROFILE · NOT A REAL MEMBER</span>
+    ${p.online?'<span class="pd-detail-status">● Online · Demo</span>':''}
+   </div><p class="pd-detail-caption">This is a fictional profile showing the design. Real members choose and approve their own photographs.</p></section>
+   <div class="pd-detail-body">
+    <section class="pd-detail-card"><div class="pd-detail-top"><div><div class="pd-detail-kicker">PATTAYA DATING · PROFILE PREVIEW</div><h1>${escapeHtml(p.name)}, ${p.age}</h1><p>⌖ ${escapeHtml(p.area)}, Pattaya</p></div><span class="pd-detail-sample">Demo</span></div>
+     <div class="pd-detail-interest-tags">${interests.map(x=>'<span>'+escapeHtml(x)+'</span>').join('')}</div>
+     <div class="pd-detail-separator"></div>
+     <h3>About me</h3><p>Hi! I enjoy good conversations, new places and relaxed evenings in Pattaya. I love meeting friendly people and seeing where a genuine connection might lead.</p>
+     <h3>Looking for</h3><p>Dating and meaningful connections</p>
+    </section>
+    <section class="pd-detail-card pd-detail-connect"><h3>Start a connection</h3><p>Explore the messaging experience with this sample profile.</p>
+     <div class="pd-detail-actions"><button class="pd-detail-message" onclick="startChat(${p.id})">✉ Send message</button><button class="pd-detail-like" onclick="profileLike(${p.id})">${liked.has(p.id)?'♥ Liked':'♡ Like'}</button></div>
+     <div class="pd-detail-secondary-actions"><button onclick="openGiftShop(${p.id})">🎁 Gift preview</button><button onclick="openVideoCall(${p.id})">◉ Video preview</button></div>
+     <small>Demo interactions only. No payment or real call is initiated.</small>
+    </section>
+    <section class="pd-detail-card pd-detail-information"><h3>Details</h3><div><span>Location</span><b>${escapeHtml(p.area)}</b></div><div><span>Age</span><b>${p.age}</b></div><div><span>Profile type</span><b>Fictional demo</b></div><div><span>Verification</span><b>Not identity-verified</b></div></section>
+   </div>
+  </div>
+ </div>`;
 }
 function startChat(id){profileId=null;selectedChat=id;if(!chats[id])chats[id]=[];closeModal();go('chats')}function renderLikes(el){const arr=people.filter(p=>liked.has(p.id));el.innerHTML=`<div class="resultRow"><h2>Your likes</h2><span>${arr.length} liked</span></div>${arr.length?`<div class="cards">${arr.map(memberCard).join('')}</div>`:'<div class="panel empty">♡<h3>No likes yet</h3>Tap the heart on a demo profile in Discover.</div>'}`}function chatSnippet(id){const arr=chats[id]||[];const last=arr[arr.length-1];return last?(last.gift?'🎁 '+last.gift.name:last.text):'Start a conversation'}
 function selectConversation(id){selectedChat=id;render()}
