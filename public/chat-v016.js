@@ -69,6 +69,7 @@ function showSupportConversation(){
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">♥</span><div><h2>Pattaya Dating Support</h2><span class="chatSub">Official system messages</span></div></header><div class="chatlog" id="support-chat-messages"></div><form class="composer" id="pd-support-compose"><input name="message" maxlength="2000" placeholder="Write to Support…" required><button class="primary">Send</button></form><p class="microcopy" id="pd-support-status">Messages are sent to Pattaya Dating Support.</p>';
  side.innerHTML='<div class="inspectorAvatar">♥</div><div class="inspectorName">Pattaya Dating Support</div><div class="inspectorMeta">Official platform account</div><p class="microcopy">This is a system conversation, not a dating profile.</p>';
+ addChatDesignDetails();
  const log=document.getElementById('support-chat-messages');for(const m of supportItems){const bubble=document.createElement('div');bubble.className='bubble'+(m.sender_type==='member'?' mine':'');bubble.textContent=m.body;log.append(bubble)}log.scrollTop=log.scrollHeight;
  document.getElementById('pd-support-compose').onsubmit=async e=>{e.preventDefault();const form=e.currentTarget,msg=form.elements.message.value.trim();if(!msg)return;const btn=form.querySelector('button');btn.disabled=true;const {error}=await client().rpc('dating_support_send',{message_body:msg});btn.disabled=false;if(error){document.getElementById('pd-support-status').textContent=error.message;return}form.reset();await refreshSupport();showSupportConversation()};
  client().rpc('dating_mark_support_read').then(()=>{supportItems.forEach(x=>x.read_at=x.read_at||new Date().toISOString());renderContactList();window.PattayaNotifications?.refresh?.()});
@@ -96,6 +97,15 @@ function renderContactList(){
   b.onclick=()=>openDemo(p.id);box.append(b);
  }
 }
+function addChatDesignDetails(){
+ const contact=document.querySelector('.chatContacts'),side=document.getElementById('unified-side');
+ if(contact&&!contact.querySelector('.pd-chat-contact-label')){const label=document.createElement('div');label.className='pd-chat-contact-label';label.innerHTML='<span>CONVERSATIONS</span><span class="pd-chat-mini-heart">♥</span>';contact.querySelector('.chatitems')?.before(label)}
+ if(side&&!side.querySelector('.pd-chat-gift-preview')){
+ const preview=document.createElement('section');preview.className='pd-chat-gift-preview';
+ preview.innerHTML='<div class="pd-chat-gift-title"><strong>Make a sweet impression</strong><span>PREVIEW</span></div><div class="pd-chat-gift-items"><div><img src="./assets/social-2026/gift-diamond.webp" alt="Original diamond gift illustration" loading="lazy"><strong>Diamond</strong></div><div><span class="pd-chat-gift-emoji">🌹</span><strong>Rose</strong></div><div><span class="pd-chat-gift-emoji">💝</span><strong>Heart</strong></div></div><p>Gifts and coin purchases are not available for real accounts yet.</p>';
+ side.append(preview);
+ }
+}
 function openDemo(id){
  halt();selected=null;activeDemo=id;renderContactList();
  // Use the original, established chat content as a template, without switching pages.
@@ -103,6 +113,7 @@ function openDemo(id){
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+p.name[0]+'</span><div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
  side.innerHTML='<div class="inspectorAvatar">'+p.name[0]+'</div><div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
+ addChatDesignDetails();
  const demoData=(id===1?[{mine:false,text:'สวัสดีค่ะ ยินดีที่ได้รู้จัก! (Hello, nice to meet you!)'},{mine:true,text:'Hi! Nice to meet you too. How is your day?'}]:[{mine:false,text:'Hi! Great to meet you here.'}]);
  window.pdDemoMessages=window.pdDemoMessages||{};const arr=window.pdDemoMessages[id]||(window.pdDemoMessages[id]=demoData);
  const draw=()=>{const log=document.getElementById('unified-demo-log');if(!log)return;log.replaceChildren();for(const m of arr){const bubble=document.createElement('div');bubble.className='bubble'+(m.mine?' mine':'');bubble.textContent=m.text;log.append(bubble)}log.scrollTop=log.scrollHeight};draw();
@@ -123,6 +134,7 @@ async function openConversation(c){
   document.getElementById('live-send-form').onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,body=f.elements.body.value.trim();if(!body)return;const {error}=await client().rpc('dating_send_message',{target:c.other_id,message_body:body});if(error)document.getElementById('live-chat-note').textContent=error.message;else{f.reset();await loadMessages(c.id)}};
  }else actions.textContent=c.status==='pending'?'Waiting for acceptance.':'Request declined.';
  side.innerHTML='<div class="inspectorAvatar">'+esc(c.display_name[0]||'?')+'</div><div class="inspectorName">'+esc(c.display_name)+'</div><div class="inspectorMeta">Real member · '+esc(c.status)+'</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="live-gift">🎁 Gifts · Demo</button><button class="lightbtn video-btn" id="live-video">◉ Video · Demo</button><button class="lightbtn" id="live-report">Report member</button><button class="lightbtn" id="live-block">Block this member</button></div><p class="microcopy">Gifts and video calls for real users are not yet available.</p>';
+ addChatDesignDetails();
  document.getElementById('live-gift').onclick=()=>alert('Virtual gifts for real members are not active yet.');
  document.getElementById('live-video').onclick=()=>alert('Real video calls are not available yet.');
  document.getElementById('live-report').onclick=()=>openReportDialog(c);
