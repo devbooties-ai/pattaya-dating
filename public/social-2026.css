@@ -218,3 +218,8 @@ body.pd-compact-member-page .notice{font-size:10px;opacity:.7;margin-top:14px}
 .pd-profile3-note{color:#9da4b2;font-size:10px;line-height:1.5;margin:0}
 @media(max-width:920px){.pd-profile3-surface{grid-template-columns:minmax(225px,1fr) minmax(300px,1.1fr)}.pd-profile3-main{padding:21px;gap:14px}}
 @media(max-width:700px){.pd-profile3-surface{grid-template-columns:1fr}.pd-profile3-image{min-height:340px;height:440px;max-height:440px}.pd-profile3-main{padding:20px}.pd-profile3{margin:0}}
+
+/* Stable image sizing at desktop and mobile viewport heights */
+.pd-profile3-image{height:min(68vh,610px);min-height:430px}
+.pd-profile3-image img{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:700px){.pd-profile3-image{height:440px;min-height:340px}}
