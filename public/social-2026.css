@@ -223,3 +223,28 @@ body.pd-compact-member-page .notice{font-size:10px;opacity:.7;margin-top:14px}
 .pd-profile3-image{height:min(68vh,610px);min-height:430px}
 .pd-profile3-image img{position:absolute;inset:0;width:100%;height:100%}
 @media(max-width:700px){.pd-profile3-image{height:440px;min-height:340px}}
+
+/* Compact right-photo detail v4 — desktop-focused profile */
+.pd-profile4{max-width:1130px;margin:0 auto}
+.pd-profile4-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;color:#97a0b2;font-size:10px;letter-spacing:.7px}
+.pd-profile4-nav button{border:0;background:none;color:#eb3677;font-weight:800;font-size:12px;cursor:pointer;padding:7px 0}
+.pd-profile4-card{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);border:1px solid #e8edf5;border-radius:19px;background:white;overflow:hidden;box-shadow:0 12px 30px #17233b0b;min-height:490px}
+.pd-profile4-content{padding:29px 33px;display:flex;flex-direction:column;gap:21px;min-width:0}
+.pd-profile4-heading h1{font-size:clamp(27px,2.7vw,36px);color:#142039;line-height:1.1;letter-spacing:-1.3px;margin:8px 0}
+.pd-profile4-kicker{font-size:10px;color:#f23d79;letter-spacing:1.4px;font-weight:850}
+.pd-profile4-location{font-size:12px;color:#6e7c93;line-height:1.5}.pd-profile4-location span{color:#a4aaba}
+.pd-profile4-content h2{font-size:12px;letter-spacing:.1px;color:#17233d;margin:0 0 8px;font-weight:850}
+.pd-profile4-about p{font-size:13px;line-height:1.7;color:#667189;margin:0;max-width:440px}
+.pd-profile4-tags{display:flex;flex-wrap:wrap;gap:7px}
+.pd-profile4-tags span{font-size:11px;color:#5c6780;background:#f5f5fa;border-radius:99px;padding:7px 12px}
+.pd-profile4-intent{display:flex;flex-wrap:wrap;align-items:center;gap:9px;font-size:12px}.pd-profile4-intent>span{color:#8994a6}.pd-profile4-intent strong{color:#28354d;font-weight:750}
+.pd-profile4-actions{display:flex;gap:9px}.pd-profile4-actions button{border:0;cursor:pointer;border-radius:11px;padding:13px 14px;font-size:13px;font-weight:800}
+.pd-profile4-chat{color:#fff;background:linear-gradient(100deg,#ff2471,#ff5584);flex:1}
+.pd-profile4-like{background:#fff0f6;color:#ee3172}
+.pd-profile4-extras{display:flex;gap:8px;margin-top:-10px}.pd-profile4-extras button{flex:1;border:1px solid #e9eaf3;background:#fafafd;border-radius:10px;padding:10px 6px;color:#58647e;font-size:11px;font-weight:750;cursor:pointer}
+.pd-profile4-disclaimer{font-size:10px;color:#a0a8b6;line-height:1.5;margin:0}
+.pd-profile4-photo{position:relative;background:#eae8ec;min-height:490px}
+.pd-profile4-photo img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.pd-profile4-demo{position:absolute;bottom:13px;right:13px;background:#14213bc9;color:#fff;border-radius:8px;padding:7px 10px;font-size:9px;letter-spacing:.8px;font-weight:800}
+@media(max-width:950px){.pd-profile4-content{padding:22px 23px;gap:16px}.pd-profile4-card{grid-template-columns:1fr .88fr;min-height:450px}.pd-profile4-photo{min-height:450px}}
+@media(max-width:700px){.pd-profile4-card{grid-template-columns:1fr}.pd-profile4-photo{order:-1;min-height:340px;height:380px}.pd-profile4-content{padding:20px 19px}.pd-profile4-nav{margin-bottom:9px}}
