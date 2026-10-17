@@ -64,3 +64,37 @@ button,.pill,.filterBtn,.chatitem{transition:background .15s,border-color .15s,t
 .pd-social-member-visual .pd-social-avatar{width:78px;height:78px;font-size:38px;border:2px solid #fff9;position:absolute;left:14px;bottom:14px;background:#ffffffc4;z-index:2}
 .pd-social-member-visual .pd-social-illustration-label{position:absolute;right:12px;bottom:14px;z-index:2;background:#17223cba;color:white;border-radius:100px;padding:6px 9px;font-size:10px;letter-spacing:.2px}
 @media(max-width:650px){.pd-social-member-visual .pd-social-avatar{width:52px;height:52px;font-size:25px;left:8px;bottom:8px}.pd-social-member-visual .pd-social-illustration-label{font-size:8px;right:6px;bottom:9px}}
+
+/* Social Chat v1.3 */
+.chatLayout{gap:17px;align-items:stretch}
+.chatLayout>.panel{border:1px solid #ebedf5;border-radius:23px;box-shadow:0 15px 38px #151c380c}
+.chatContacts{background:linear-gradient(180deg,#fff,#fffcfd);gap:10px}
+.chatContacts h2{font-size:22px;letter-spacing:-.7px}
+.chatContacts .chatContactCount{font-size:12px;color:#9a8fa2}
+.chatContacts .chatSearch{border:1px solid #ebeaf2;background:#f7f8fc;border-radius:12px;padding:13px 14px}
+.pd-chat-contact-label{display:flex;justify-content:space-between;align-items:center;color:#9da4b4;font-size:10px;font-weight:850;letter-spacing:1.5px;margin:12px 5px 4px}
+.pd-chat-mini-heart{background:#fff0f3;color:#ff4474;display:grid;place-items:center;border-radius:10px;width:25px;height:25px;font-size:15px}
+.chatContacts .chatitem{padding:13px 11px;border:1px solid transparent;border-radius:15px;display:flex;gap:10px;align-items:center}
+.chatContacts .chatitem:hover{border-color:#f8d1dc;background:#fff6f9}
+.chatContacts .chatitem.selected{background:linear-gradient(110deg,#fff0f5,#fff9fc);border-color:#f5c4d3;box-shadow:0 5px 12px #ff416913}
+.chatContacts .contactAvatar,.chatMain .contactAvatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(140deg,#ffe4ed,#f2dbff);color:#de4879;border:2px solid #fff;box-shadow:0 3px 12px #46244113}
+.chatMain{background:#fff}.chatMain .chat-head{min-height:68px}.chatMain .chat-head h2{font-size:18px;letter-spacing:-.5px}
+.chatMain .chatlog{background:linear-gradient(175deg,#f9fafe,#fff9fc);border:1px solid #f0f0f7;padding:20px;scrollbar-width:thin}
+.chatMain .bubble{padding:12px 16px;line-height:1.55;box-shadow:0 4px 11px #1a244009}
+.chatMain .composer{background:#f8f9fc;border-radius:15px;padding:7px;margin-top:12px;border:1px solid #edf0f5}
+.chatMain .composer input{border:0;background:transparent;outline:0}
+.chatMain .composer button{border-radius:12px}
+.chatInspector{text-align:center}
+.chatInspector .inspectorAvatar{margin:5px auto 12px;border:4px solid white;box-shadow:0 0 0 3px #ffe0eb,0 8px 21px #ee77972f}
+.chatInspector .inspectorName{font-size:19px;letter-spacing:-.5px}
+.chatInspector .inspectorActions{margin-top:17px}
+.chatInspector .inspectorActions .lightbtn{width:100%;border-radius:12px;padding:12px;background:#f7f8fc}
+.chatInspector .inspectorActions .giftbtn{background:#fff0f5;color:#e84771;border-color:#ffd3df}
+.chatInspector .inspectorActions .video-btn{background:#f2eeff;color:#7658d1;border-color:#e5dcff}
+.pd-chat-gift-preview{text-align:left;margin-top:22px;padding:17px;border-radius:18px;background:linear-gradient(145deg,#25163e,#3b1b51 65%,#171c39);color:white}
+.pd-chat-gift-title{display:flex;gap:8px;align-items:center;justify-content:space-between}.pd-chat-gift-title strong{font-size:13px}.pd-chat-gift-title>span{font-size:8px;letter-spacing:1px;color:#ffda99}
+.pd-chat-gift-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:15px 0}
+.pd-chat-gift-items>div{background:#ffffff1a;border-radius:12px;display:grid;place-items:center;min-width:0;padding:7px 2px;gap:4px}
+.pd-chat-gift-items img{width:50px;height:48px;object-fit:cover;border-radius:10px}.pd-chat-gift-emoji{font-size:32px;height:48px;display:grid;place-items:center}
+.pd-chat-gift-items strong{font-size:10px;font-weight:700;color:#f8eaf9}
+.pd-chat-gift-preview p{font-size:10px;line-height:1.6;color:#e3cfe7;margin:0}
