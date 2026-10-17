@@ -35,3 +35,9 @@ button,.pill,.filterBtn,.chatitem{transition:background .15s,border-color .15s,t
 @media(max-width:1420px){.discoverLayout{grid-template-columns:minmax(0,1fr) 225px}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.chatLayout{grid-template-columns:240px minmax(0,1fr)}.chatInspector{grid-column:2}}
 @media(max-width:1020px){.discoverLayout{grid-template-columns:1fr}.pd-discover-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.shell{padding:22px}.sidebar{padding:17px 10px}}
 @media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{display:none}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.top{padding:17px}.pd-discover-rail,.pd-feature-list,.pd-page-feature{grid-template-columns:1fr}.chatLayout{display:block}.chatLayout>.panel{margin:0 0 12px}.bottom{display:flex}}
+
+/* Independent WebP artwork, generated from scripts/build_social_assets.py */
+.sidebarfoot{background-image:linear-gradient(145deg,#331433e0,#101329f4),url('./assets/social-2026/premium-crown.webp');background-size:cover;background-position:center}
+.pd-premium-card{background-image:linear-gradient(110deg,#221436e0,#2e114ddc),url('./assets/social-2026/premium-crown.webp');background-position:center;background-size:cover}
+.pd-page-feature:has(.pd-promo-art){background-image:linear-gradient(110deg,#14172def,#3c164dcb),url('./assets/social-2026/live-glow.webp');background-position:center;background-size:cover}
+.pd-page-feature .pd-promo-art{background-image:url('./assets/social-2026/gift-diamond.webp');background-size:cover;border-radius:24px}
