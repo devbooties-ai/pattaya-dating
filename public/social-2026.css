@@ -41,3 +41,17 @@ button,.pill,.filterBtn,.chatitem{transition:background .15s,border-color .15s,t
 .pd-premium-card{background-image:linear-gradient(110deg,#221436e0,#2e114ddc),url('./assets/social-2026/premium-crown.webp');background-position:center;background-size:cover}
 .pd-page-feature:has(.pd-promo-art){background-image:linear-gradient(110deg,#14172def,#3c164dcb),url('./assets/social-2026/live-glow.webp');background-position:center;background-size:cover}
 .pd-page-feature .pd-promo-art{background-image:url('./assets/social-2026/gift-diamond.webp');background-size:cover;border-radius:24px}
+
+/* Discover v1.1 — original responsive card components for Supabase members */
+.pd-member-results{display:block}.pd-social-member-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px;margin-top:20px}
+.pd-social-member-card{overflow:hidden;background:#fff;border:1px solid #eaedf4;border-radius:22px;text-align:left;padding:0;box-shadow:0 10px 28px #1625410d;min-width:0;transition:transform .18s,box-shadow .18s}
+.pd-social-member-card:hover{transform:translateY(-4px);box-shadow:0 18px 38px #1625411e}
+.pd-social-member-visual{aspect-ratio:1.25/1;background:radial-gradient(circle at 70% 30%,#ffc5d4 0,transparent 45%),linear-gradient(135deg,#f4d9ee,#e7e2fb 60%,#d9ecff);position:relative;display:grid;place-items:center}
+.pd-social-member-visual:after{content:'';position:absolute;inset:auto 0 0;height:55px;background:linear-gradient(transparent,#171d3d18)}
+.pd-social-avatar{display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#ffffff94;backdrop-filter:blur(10px);color:#ad4b81;font-weight:850;font-size:64px;border:3px solid #ffffffb3}
+.pd-social-real-badge{position:absolute;top:13px;left:13px;border-radius:99px;background:#fff;padding:7px 10px;font-size:10px;font-weight:850;color:#db4a73;letter-spacing:.5px}
+.pd-social-member-information{padding:17px;display:flex;flex-direction:column;gap:8px}.pd-social-member-information strong{font-size:19px;letter-spacing:-.4px;color:#17223d}.pd-social-member-information>span{font-size:12px;color:#7d899d}.pd-social-member-information p{font-size:13px;color:#67728a;line-height:1.55;margin:2px 0;min-height:39px}.pd-social-interest{font-size:11px!important;color:#d9416e!important}
+.pd-social-open{background:linear-gradient(110deg,#ff3e6c,#ff6683);color:white!important;text-align:center;border-radius:11px;padding:12px;font-weight:800;margin-top:4px}
+#real-search{border:1px solid #e8edf4;padding:18px;border-radius:18px;background:#fafbfe}#real-results{margin-top:19px}
+.pd-discover-intro{background-image:linear-gradient(110deg,#ffffffee,#fff0f8e9),url('./assets/social-2026/gift-diamond.webp');background-position:right center;background-size:auto,200px auto;background-repeat:no-repeat}
+@media(max-width:1150px){.pd-social-member-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.pd-social-member-grid{grid-template-columns:1fr 1fr;gap:11px}.pd-social-member-information{padding:11px}.pd-social-avatar{width:76px;height:76px;font-size:43px}.pd-social-member-information strong{font-size:15px}}
