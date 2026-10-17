@@ -29,3 +29,21 @@ background('premium-crown.webp',[(22,16,48),(255,191,84),(255,229,172)],'premium
 background('live-glow.webp',[(25,15,57),(228,65,150),(190,125,255)],'live')
 background('gift-diamond.webp',[(65,25,71),(255,105,169),(255,231,185)],'gift')
 print('Created three original high-quality WebP design backgrounds.')
+
+def portrait_placeholder(filename,base,accent):
+ w,h=640,790
+ im=Image.new('RGBA',(w,h),(*base,255));d=ImageDraw.Draw(im,'RGBA')
+ for k in range(5):
+  radius=135+k*78
+  d.ellipse((390-radius,310-radius,390+radius,310+radius),fill=(*accent,max(5,42-k*8)))
+ d.ellipse((190,120,490,420),fill=(255,255,255,38))
+ # Purposefully anonymous editorial silhouettes, never depict actual registered members.
+ d.ellipse((220,178,420,378),fill=(*accent,190))
+ d.rounded_rectangle((110,405,530,855),radius=210,fill=(*accent,180))
+ d.arc((130,150,510,555),10,170,fill=(255,255,255,55),width=14)
+ d.polygon([(50,620),(140,535),(175,690)],fill=(255,255,255,28))
+ im.convert('RGB').save(BASE/filename,'WEBP',quality=87,method=6)
+portrait_placeholder('profile-placeholder-rose.webp',(252,225,235),(204,105,153))
+portrait_placeholder('profile-placeholder-lilac.webp',(229,225,250),(142,112,197))
+portrait_placeholder('profile-placeholder-peach.webp',(255,232,212),(216,140,113))
+portrait_placeholder('profile-placeholder-blue.webp',(222,237,252),(105,144,191))
