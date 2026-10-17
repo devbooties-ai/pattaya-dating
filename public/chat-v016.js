@@ -7,6 +7,8 @@ function halt(){if(timer)clearInterval(timer);timer=null}
 let conversations=[],activeDemo=1;
 try{window.pdDemoMessages=Object.assign({},JSON.parse(sessionStorage.getItem('pd-demo-messages')||'{}'),window.pdDemoMessages||{})}catch(e){window.pdDemoMessages=window.pdDemoMessages||{}}
 const demoPeople=()=>window.pdDemoProfiles||[{id:1,name:'Mali',age:28,area:'Jomtien'}];
+const demoPhoto=id=>'./assets/social-2026/demo-profile-'+String(({1:1,2:5,3:2,4:6,5:3,6:7,7:4,8:8})[id]||1).padStart(2,'0')+'.webp';
+const demoAvatar=(p,side=false)=>'<span class="'+(side?'inspectorAvatar':'contactAvatar')+' pd-photo-avatar"><img src="'+demoPhoto(p.id)+'" alt="'+esc(p.name)+' demo portrait" loading="lazy"></span>';
 async function list(el){
  halt();if(contactsTimer)clearInterval(contactsTimer);
  // Keep the established v0.6 three-column design for both demo and real chats.
@@ -96,8 +98,8 @@ function renderContactList(){
  const demos=demoPeople();
  for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
   const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');
-  b.innerHTML='<span class="contactAvatar">'+p.name[0]+'</span><span class="contactData"><strong>'+p.name+', '+p.age+'</strong><small>Demo conversation</small></span>';
-  b.onclick=()=>openDemo(p.id);box.append(b);
+  b.innerHTML=demoAvatar(p)+'<span class="contactData"><strong>'+esc(p.name)+', '+p.age+'</strong><small>'+esc((window.pdDemoMessages?.[p.id]||[]).at(-1)?.text||'Demo conversation')+'</small></span>';
+  b.onclick=()=>openDemo(p.id);box.append(b);if(!selected&&activeDemo===p.id)box.prepend(b);
  }
 }
 function addChatDesignDetails(){
@@ -114,8 +116,8 @@ function openDemo(id){
  // Use the original, established chat content as a template, without switching pages.
  const p=demoPeople().find(person=>person.id===id)||demoPeople()[0];
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
- center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+p.name[0]+'</span><div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
- side.innerHTML='<div class="inspectorAvatar">'+p.name[0]+'</div><div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
+ center.innerHTML='<header class="chat-head">'+demoAvatar(p)<div><h2>'+p.name+'</h2><span class="chatSub">'+p.area+' · Demo contact</span></div><div class="head-actions"><button class="lightbtn giftbtn" id="demo-gift">🎁 Gift</button><button class="lightbtn video-btn" id="demo-video">◉ Video call</button></div></header><div class="chatlog" id="unified-demo-log"></div><form class="composer" id="unified-demo-compose"><input placeholder="Write a demo message..." maxlength="1000" required><button class="primary">Send</button></form><p class="microcopy">Local demo only · Messages not sent to real users.</p>';
+ side.innerHTML=demoAvatar(p,true)<div class="inspectorName">'+p.name+', '+p.age+'</div><div class="inspectorMeta">'+p.area+' · Demo</div><div class="inspectorActions"><button class="lightbtn giftbtn" id="demo-side-gift">🎁 Send gift</button><button class="lightbtn video-btn" id="demo-side-video">◉ Video call preview</button></div><p class="microcopy">Fictional contact. Gifts and calls are demos.</p>';
  addChatDesignDetails();
  const demoData=[];
  window.pdDemoMessages=window.pdDemoMessages||{};const arr=window.pdDemoMessages[id]||(window.pdDemoMessages[id]=demoData);
