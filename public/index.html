@@ -61,7 +61,7 @@ function pdSetAge(v){ageMax=Number(v);render()}
 function pdDiscoverSearch(value){search=value;renderDiscover(document.getElementById('content'));const el=document.querySelector('.pd-top-search input');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
 let pdAccountOutsideBound=false;
 function pdToggleAccount(event){event.stopPropagation();const menu=document.getElementById('pd-account-menu'),button=event.currentTarget;if(!menu)return;menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden));if(!pdAccountOutsideBound){document.addEventListener('click',e=>{const m=document.getElementById('pd-account-menu');if(m&&!e.target.closest('.pd-account-wrap')){m.hidden=true;document.querySelector('.pd-top-account')?.setAttribute('aria-expanded','false')}});pdAccountOutsideBound=true}}
-function pdAccountNavigate(action){const menu=document.getElementById('pd-account-menu');if(menu)menu.hidden=true;if(action==='edit'){window.pdProfileTab='account';go('profile')}else if(action==='coins'||action==='vip'){go('vip')}else if(action==='settings'){window.pdProfileTab='account';go('profile')}}
+function pdAccountNavigate(action){const menu=document.getElementById('pd-account-menu');if(menu)menu.hidden=true;if(action==='edit'||action==='settings'){go('profile');window.pdProfileTab='account';render()}else if(action==='coins'||action==='vip'){go('vip')}}
 async function pdHydrateAccount(){
  const name=document.getElementById('pd-account-name'),avatar=document.getElementById('pd-account-avatar');if(!name||!avatar)return;
  const auth=window.PattayaAuth,session=auth?.getSession?.(),client=auth?.getClient?.();
