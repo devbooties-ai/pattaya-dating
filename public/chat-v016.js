@@ -5,6 +5,8 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let selected=null,timer=null,contactsTimer=null,contactRefreshBusy=false,realtimeChannel=null,realtimeUser=null;
 function halt(){if(timer)clearInterval(timer);timer=null}
 let conversations=[],activeDemo=1;
+function mobileChat(open){document.querySelector('.chatLayout')?.classList.toggle('pd-mobile-chat-open',!!open)}
+window.pdMobileChatBack=()=>mobileChat(false);
 try{window.pdDemoMessages=Object.assign({},JSON.parse(sessionStorage.getItem('pd-demo-messages')||'{}'),window.pdDemoMessages||{})}catch(e){window.pdDemoMessages=window.pdDemoMessages||{}}
 try{window.pdDemoActivity=JSON.parse(sessionStorage.getItem('pd-demo-activity')||'{}')}catch(e){window.pdDemoActivity={}}
 const demoPeople=()=>window.pdDemoProfiles||[{id:1,name:'Mali',age:28,area:'Jomtien'}];
@@ -13,7 +15,7 @@ const demoAvatar=(p,side=false)=>'<span class="'+(side?'inspectorAvatar':'contac
 async function list(el){
  halt();if(contactsTimer)clearInterval(contactsTimer);
  // Keep the established v0.6 three-column design for both demo and real chats.
- el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><h2>Messages</h2><div class="chatContactCount">Demo contacts and live conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Demo contacts are labeled. Real requests appear here too.</div></aside><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
+ el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><h2>Messages</h2><div class="chatContactCount">Demo contacts and live conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Demo contacts are labeled. Real requests appear here too.</div></aside><button type="button" class="pd-mobile-chat-back" onclick="pdMobileChatBack()">← All messages</button><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
  document.getElementById('unified-search').oninput=renderContactList;
  if(user()){
  const {data,error}=await client().rpc('dating_my_conversations');
@@ -23,9 +25,11 @@ async function list(el){
  }else conversations=[];
  if(user())await refreshSupport();
  renderContactList();
+ const openRequested=!!window.pdRequestedDemoId;
  if(window.pdRequestedDemoId){activeDemo=Number(window.pdRequestedDemoId);window.pdRequestedDemoId=null}
  const found=conversations.find(c=>c.id===selected);
  if(found)openConversation(found);else if(activeDemo===0&&supportItems.length)showSupportConversation();else openDemo(activeDemo);
+ mobileChat(openRequested);
  contactsTimer=setInterval(refreshContacts,12000);attachRealtime();
 }
 async function refreshContacts(){
@@ -71,7 +75,7 @@ async function refreshSupport(){
  if(!error){supportItems=data||[];renderContactList();window.PattayaNotifications?.refresh?.()}
 }
 function showSupportConversation(){
- halt();selected=null;activeDemo=0;renderContactList();
+ halt();selected=null;activeDemo=0;renderContactList();mobileChat(true);
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">♥</span><div><h2>Pattaya Dating Support</h2><span class="chatSub">Official system messages</span></div></header><div class="chatlog" id="support-chat-messages"></div><form class="composer" id="pd-support-compose"><input name="message" maxlength="2000" placeholder="Write to Support…" required><button class="primary">Send</button></form><p class="microcopy" id="pd-support-status">Messages are sent to Pattaya Dating Support.</p>';
  side.innerHTML='<div class="inspectorAvatar">♥</div><div class="inspectorName">Pattaya Dating Support</div><div class="inspectorMeta">Official platform account</div><p class="microcopy">This is a system conversation, not a dating profile.</p>';
@@ -113,7 +117,7 @@ function addChatDesignDetails(){
  }
 }
 function openDemo(id){
- halt();selected=null;activeDemo=id;renderContactList();
+ halt();selected=null;activeDemo=id;renderContactList();mobileChat(true);
  // Use the original, established chat content as a template, without switching pages.
  const p=demoPeople().find(person=>person.id===id)||demoPeople()[0];
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
@@ -129,7 +133,7 @@ function openDemo(id){
  for(const el of ['demo-video','demo-side-video'])document.getElementById(el).onclick=()=>window.openVideoCall?.(id);
 }
 async function openConversation(c){
- halt();selected=c.id;renderContactList();
+ halt();selected=c.id;renderContactList();mobileChat(true);
  {const {error:readError}=await client().rpc('dating_mark_read',{conv_id:c.id});if(!readError){c.unread_count=0;renderContactList();window.PattayaNotifications?.refresh?.()}}
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><div><h2>'+esc(c.display_name)+'</h2><span class="chatSub">'+esc(c.status==='pending'?'Message request · Live member':'Live member · '+c.status)+'</span></div></header><div class="chatlog" id="live-messages">Loading…</div><div id="live-chat-actions"></div><p id="live-chat-note" class="microcopy" role="status"></p>';
