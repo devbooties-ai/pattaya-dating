@@ -345,3 +345,12 @@ body.pd-discover-mockup .nav{padding:15px 13px;border-radius:12px}
 .pd-top-usericon{width:35px;height:35px;border-radius:50%;background:#32415d;display:grid;place-items:center;font-size:23px;border:2px solid #fa628c}
 @media(max-width:1120px){.pd-top-links .pd-top-coins,.pd-top-links .pd-top-add{display:none}}
 @media(max-width:650px){.pd-top-links .pd-top-account span:nth-child(2){display:none}.pd-top-links{gap:3px}.pd-top-search{width:48%}.pd-top-usericon{width:31px;height:31px}}
+
+/* v3.4 urgent grid repair: fixed sidebar must not remove the content grid track */
+@media(min-width:851px){
+body.pd-discover-mockup .app{display:grid!important;grid-template-columns:220px minmax(0,1fr)!important;width:100%!important;min-width:0}
+body.pd-discover-mockup .shell{grid-column:2!important;grid-row:1!important;min-width:0!important;width:100%!important;margin:0!important;max-width:none!important;box-sizing:border-box!important}
+body.pd-discover-mockup .sidebar{grid-column:1!important;grid-row:1!important}
+body.pd-discover-mockup #content{min-width:0}
+body.pd-discover-mockup .pd-mock-discover{min-width:0;width:100%}
+}
