@@ -108,22 +108,27 @@ function profileLike(id){if(liked.has(id))liked.delete(id);else liked.add(id);re
 function demoReport(){alert('This is a fictional demo member. Reporting and blocking will be available once real accounts and moderation are connected.');}
 function renderMemberDetail(el){
  const p=people.find(x=>x.id===profileId);if(!p){backToMembers();return}
- const id=({1:1,2:5,3:2,4:6,5:3,6:7,7:4,8:8})[p.id];
- const pic='./assets/social-2026/demo-profile-'+String(id).padStart(2,'0')+'.webp';
- const tags=({1:['Coffee','Travel','Beach'],2:['Music','Food','Travel'],3:['Coffee','Music','Nature'],4:['Food','Movies','Beach'],5:['Travel','Music','Food'],6:['Cooking','Beach','Music'],7:['Travel','Food','Movies'],8:['Music','Travel','Fashion']})[p.id]||[];
- el.innerHTML=`<div class="pd-view-profile">
- <section class="pd-view-hero"><img src="${pic}" alt="Portrait of fictional virtual profile ${escapeHtml(p.name)}" loading="eager">
-  <button class="pd-view-back" onclick="backToMembers()" aria-label="Back to Discover">←</button>
-  <div class="pd-view-identity"><h1>${escapeHtml(p.name)} <span>${p.age}</span></h1><p>⌖ ${escapeHtml(p.area)}, Pattaya</p></div>
- </section>
- <div class="pd-view-content">
-  <button class="pd-view-chat" onclick="startChat(${p.id})">✉ &nbsp;Chat with ${escapeHtml(p.name)} <span>›</span></button>
-  <section class="pd-view-bio"><p>I enjoy cafés, beach walks and discovering new places. I'm here for good conversations and a genuine connection.</p></section>
-  <form class="pd-view-compose" onsubmit="sendDemoProfileMessage(event,${p.id})"><label for="pd-demo-first-message">Say hello</label><div><input id="pd-demo-first-message" name="message" maxlength="500" required autocomplete="off" placeholder="Write a message to ${escapeHtml(p.name)}..."><button type="submit" aria-label="Send demo message">➤</button></div></form>
-  <div class="pd-view-tags">${tags.map(t=>'<span>'+escapeHtml(t)+'</span>').join('')}</div>
-  <div class="pd-view-minor"><span>*Moderated · Virtual Profile*</span><button onclick="profileLike(${p.id})">${liked.has(p.id)?'♥ Liked':'♡ Like'}</button></div>
- </div></div>`;
+ const n=({1:1,2:5,3:2,4:6,5:3,6:7,7:4,8:8})[p.id],pic='./assets/social-2026/demo-profile-'+String(n).padStart(2,'0')+'.webp';
+ const interests=({1:['Coffee','Travel','Beach'],2:['Music','Food','Travel'],3:['Coffee','Nature','Music'],4:['Food','Movies','Beach'],5:['Travel','Music','Food'],6:['Cooking','Beach','Music'],7:['Travel','Food','Movies'],8:['Music','Travel','Fashion']})[p.id];
+ el.innerHTML=`<div class="pd-profile5">
+ <div class="pd-profile5-hero">
+   <img class="pd-profile5-photo" src="${pic}" alt="Portrait of fictional profile ${escapeHtml(p.name)}" loading="eager">
+   <div class="pd-profile5-shade"></div>
+   <button class="pd-profile5-back" onclick="backToMembers()" aria-label="Back to Discover">←</button>
+   <button class="pd-profile5-more" onclick="pdProfileMore()" aria-label="More profile options">•••</button>
+   <div class="pd-profile5-person"><h1>${escapeHtml(p.name)} <span>${p.age}</span></h1><p>⌖ ${escapeHtml(p.area)}, Pattaya</p><small>Moderated · Virtual Profile · Automated chat</small></div>
+ </div>
+ <div class="pd-profile5-details">
+  <button class="pd-profile5-cta" onclick="startChat(${p.id})">✉ &nbsp; Chat with ${escapeHtml(p.name)} <span>›</span></button>
+  <div class="pd-profile5-intro">I enjoy cafés, beach walks and discovering new places. I'm here for relaxed conversations and a genuine connection.</div>
+  <form class="pd-profile5-compose" onsubmit="sendDemoProfileMessage(event,${p.id})"><input name="message" placeholder="Or write a message now..." maxlength="500" aria-label="Write a free demo message" required><button type="submit" aria-label="Send demo message">➤</button></form>
+  <div class="pd-profile5-tags">${interests.map(i=>'<span>'+escapeHtml(i)+'</span>').join('')}<span>Looking for dating</span></div>
+  <div class="pd-profile5-actions"><button onclick="profileLike(${p.id})">${liked.has(p.id)?'♥ Liked':'♡ Like'}</button><button onclick="openGiftShop(${p.id})">🎁 Gift preview</button></div>
+  <p class="pd-profile5-note">Moderated · Virtual Profile · Automated chat</p>
+ </div>
+ </div>`;
 }
+function pdProfileMore(){showModal('<div class="modalTop"><h2>Profile options</h2><button class="close" onclick="closeModal()">×</button></div><p class="muted">This is a virtual, automated demo profile.</p><button class="primary" onclick="closeModal()">Close</button>')}
 function sendDemoProfileMessage(event,id){event.preventDefault();const f=event.currentTarget;const message=f.elements.message.value.trim();if(!message)return;window.pdDemoMessages=window.pdDemoMessages||{};(window.pdDemoMessages[id]||(window.pdDemoMessages[id]=[])).push({mine:true,text:message});window.pdDemoActivity=window.pdDemoActivity||{};window.pdDemoActivity[id]=Date.now();try{sessionStorage.setItem('pd-demo-activity',JSON.stringify(window.pdDemoActivity))}catch(e){}try{sessionStorage.setItem('pd-demo-messages',JSON.stringify(window.pdDemoMessages))}catch(e){}f.reset();startChat(id)}
 function startChat(id){window.pdRequestedDemoId=id;profileId=null;selectedChat=id;if(!chats[id])chats[id]=[];closeModal();go('chats')}function renderLikes(el){const arr=people.filter(p=>liked.has(p.id));el.innerHTML=`<div class="resultRow"><h2>Your likes</h2><span>${arr.length} liked</span></div>${arr.length?`<div class="cards">${arr.map(memberCard).join('')}</div>`:'<div class="panel empty">♡<h3>No likes yet</h3>Tap the heart on a demo profile in Discover.</div>'}`}function chatSnippet(id){const arr=chats[id]||[];const last=arr[arr.length-1];return last?(last.gift?'🎁 '+last.gift.name:last.text):'Start a conversation'}
 function selectConversation(id){selectedChat=id;render()}
