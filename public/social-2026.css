@@ -509,3 +509,20 @@ body.pd-compact-member-page .shell{padding-top:0}
 .pd-profile5-actions button{flex:1;border:1px solid #343746;background:#222531;color:#edeef4;padding:12px 9px;border-radius:11px;cursor:pointer;font-weight:750}
 .pd-profile5-note{margin:0;color:#aaadbe;font-size:10px}
 @media(max-width:850px){body.pd-compact-member-page .shell{padding:0!important}body.pd-compact-member-page .notice{display:none}.pd-profile5{margin:0 0 80px;border-radius:0;max-width:none}.pd-profile5-hero{height:63svh;min-height:380px;max-height:700px}.pd-profile5-details{padding:13px 15px 26px}.pd-profile5-cta{min-height:56px}.pd-profile5-person{left:18px;bottom:17px}.pd-profile5-person h1{font-size:31px}}
+
+/* Profile mobile polish v4.2: immersive photo; no docked nav over the portrait */
+@media(max-width:850px){
+body.pd-compact-member-page .bottom{display:none!important}
+body.pd-compact-member-page .app{padding-bottom:0!important;min-height:0}
+body.pd-compact-member-page .shell{padding-bottom:0!important}
+body.pd-compact-member-page .pd-profile5{margin:0!important;border-radius:0}
+body.pd-compact-member-page .pd-profile5-hero{height:min(73svh,710px);min-height:390px}
+body.pd-compact-member-page .pd-profile5-person{bottom:22px;left:20px;z-index:2}
+body.pd-compact-member-page .pd-profile5-person h1{font-size:34px;color:#fff;text-shadow:0 2px 8px #0009}
+body.pd-compact-member-page .pd-profile5-shade{background:linear-gradient(0deg,#08090de8 0%,#08090d1a 38%,#07091140 100%)}
+body.pd-compact-member-page .pd-profile5-details{padding:15px 16px 24px;gap:12px}
+body.pd-compact-member-page .pd-profile5-cta{min-height:53px;font-size:15px}
+body.pd-compact-member-page .pd-profile5-intro{padding:15px 17px;font-size:14px;line-height:1.6}
+body.pd-compact-member-page .pd-profile5-compose{padding:4px}
+body.pd-compact-member-page .pd-profile5-actions button{font-size:13px}
+}
