@@ -481,3 +481,31 @@ body.pd-compact-member-page .shell{padding-top:0}
 .pd-view-minor{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#a4a8b6;font-size:11px}
 .pd-view-minor button{background:#292536;border:1px solid #403444;color:#ff8cb1;padding:9px 16px;border-radius:9px;cursor:pointer}
 @media(max-width:850px){body.pd-compact-member-page .shell{padding:0 0 85px}.pd-view-profile{margin:0 auto;border-radius:0;max-width:600px;box-shadow:none}.pd-view-hero{height:min(65dvh,690px);min-height:370px}.pd-view-content{padding:15px 16px 22px;gap:14px}.pd-view-identity{left:20px;bottom:18px}.pd-view-chat{min-height:56px;padding:14px 38px;font-size:17px}.pd-view-bio{padding:17px}.pd-view-bio p{font-size:15px}}
+
+/* Member detail v4.1 — immersive, chat-first, mobile-first */
+body.pd-compact-member-page .top{display:none}
+body.pd-compact-member-page .shell{padding-top:0}
+.pd-profile5{max-width:780px;margin:18px auto 35px;background:#11131a;border-radius:20px;overflow:hidden;box-shadow:0 18px 55px #16213b19;color:#fff}
+.pd-profile5-hero{height:min(67vh,610px);min-height:430px;position:relative;background:#252430;overflow:hidden}
+.pd-profile5-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 25%}
+.pd-profile5-shade{position:absolute;inset:0;background:linear-gradient(0deg,#08090dde 0%,transparent 41%,#07091140 100%)}
+.pd-profile5-back,.pd-profile5-more{position:absolute;top:18px;width:45px;height:45px;border-radius:50%;border:0;background:#111a2fdf;color:white;font-size:25px;cursor:pointer;display:grid;place-items:center}
+.pd-profile5-back{left:17px}.pd-profile5-more{right:17px;font-size:22px}
+.pd-profile5-person{position:absolute;bottom:20px;left:23px;right:18px;text-shadow:0 2px 8px #0008}
+.pd-profile5-person h1{margin:0 0 5px;font-size:clamp(27px,4vw,41px);line-height:1.1;letter-spacing:-1px;color:white;font-weight:850}
+.pd-profile5-person h1 span{font-weight:500}
+.pd-profile5-person p{margin:0 0 8px;font-size:15px;color:#f0edf3}
+.pd-profile5-person small{font-size:10px;color:#d5d7e1}
+.pd-profile5-details{padding:18px 22px 24px;display:grid;gap:15px}
+.pd-profile5-cta{border:0;border-radius:12px;background:#ff427b;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;font-weight:850;font-size:16px;cursor:pointer}
+.pd-profile5-cta span{margin-left:auto;font-size:24px;line-height:.8}
+.pd-profile5-intro{background:#1e2029;padding:20px;border-radius:15px;color:#ebeaf1;line-height:1.65;font-size:15px}
+.pd-profile5-compose{display:flex;gap:7px;background:#222530;border-radius:13px;padding:6px}
+.pd-profile5-compose input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:white;padding:10px 11px;font-size:14px}
+.pd-profile5-compose button{border:0;border-radius:10px;background:#ff427b;color:white;font-size:19px;width:43px;cursor:pointer}
+.pd-profile5-tags{display:flex;gap:7px;flex-wrap:wrap}
+.pd-profile5-tags span{background:#30323e;color:#f1eef4;font-size:11px;padding:8px 11px;border-radius:9px}
+.pd-profile5-actions{display:flex;gap:9px}
+.pd-profile5-actions button{flex:1;border:1px solid #343746;background:#222531;color:#edeef4;padding:12px 9px;border-radius:11px;cursor:pointer;font-weight:750}
+.pd-profile5-note{margin:0;color:#aaadbe;font-size:10px}
+@media(max-width:850px){body.pd-compact-member-page .shell{padding:0!important}body.pd-compact-member-page .notice{display:none}.pd-profile5{margin:0 0 80px;border-radius:0;max-width:none}.pd-profile5-hero{height:63svh;min-height:380px;max-height:700px}.pd-profile5-details{padding:13px 15px 26px}.pd-profile5-cta{min-height:56px}.pd-profile5-person{left:18px;bottom:17px}.pd-profile5-person h1{font-size:31px}}
