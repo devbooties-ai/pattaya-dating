@@ -4,7 +4,9 @@ const auth=()=>window.PattayaAuth,client=()=>auth()?.getClient(),user=()=>auth()
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let selected=null,timer=null,contactsTimer=null,contactRefreshBusy=false,realtimeChannel=null,realtimeUser=null;
 function halt(){if(timer)clearInterval(timer);timer=null}
-let conversations=[],activeDemo=1;
+let conversations=[],activeDemo=1, pdInboxTab='inbox';
+function selectInboxTab(tab){pdInboxTab=tab;document.querySelectorAll('.pd-inbox-tab').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('selected',on);b.setAttribute('aria-selected',String(on))});renderContactList()}
+window.pdSelectInboxTab=selectInboxTab;
 function mobileChat(open){document.querySelector('.chatLayout')?.classList.toggle('pd-mobile-chat-open',!!open)}
 window.pdMobileChatBack=()=>mobileChat(false);
 try{window.pdDemoMessages=Object.assign({},JSON.parse(sessionStorage.getItem('pd-demo-messages')||'{}'),window.pdDemoMessages||{})}catch(e){window.pdDemoMessages=window.pdDemoMessages||{}}
@@ -15,7 +17,7 @@ const demoAvatar=(p,side=false)=>'<span class="'+(side?'inspectorAvatar':'contac
 async function list(el){
  halt();if(contactsTimer)clearInterval(contactsTimer);
  // Keep the established v0.6 three-column design for both demo and real chats.
- el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><h2>Messages</h2><div class="chatContactCount">Demo contacts and live conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Demo contacts are labeled. Real requests appear here too.</div></aside><button type="button" class="pd-mobile-chat-back" onclick="pdMobileChatBack()">← All messages</button><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
+ el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><h2>Messages</h2><div class="pd-inbox-tabs" role="tablist" aria-label="Message folders"><button type="button" class="pd-inbox-tab" data-tab="unread" role="tab" aria-selected="false" onclick="pdSelectInboxTab('unread')">Unread</button><button type="button" class="pd-inbox-tab selected" data-tab="inbox" role="tab" aria-selected="true" onclick="pdSelectInboxTab('inbox')">Inbox</button><button type="button" class="pd-inbox-tab" data-tab="outbox" role="tab" aria-selected="false" onclick="pdSelectInboxTab('outbox')">Outbox</button></div><div class="chatContactCount">Real conversations and labeled virtual chats</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Demo contacts are labeled. Real requests appear here too.</div></aside><button type="button" class="pd-mobile-chat-back" onclick="pdMobileChatBack()">← All messages</button><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
  document.getElementById('unified-search').oninput=renderContactList;
  if(user()){
  const {data,error}=await client().rpc('dating_my_conversations');
@@ -90,7 +92,7 @@ function renderContactList(){
  const q=(document.getElementById('unified-search')?.value||'').toLowerCase();
  box.replaceChildren();
  // Live contacts are sorted by latest activity. Sample contacts follow them.
- const real=conversations.filter(c=>c.display_name.toLowerCase().includes(q)).sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+ const real=conversations.filter(c=>c.display_name.toLowerCase().includes(q)&&(pdInboxTab==='inbox'||(pdInboxTab==='unread'&&(Number(c.unread_count)>0||(c.status==='pending'&&c.incoming)))||(pdInboxTab==='outbox'&&c.status==='pending'&&!c.incoming))).sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
  for(const c of real){
   const unread=Number(c.unread_count)||0,request=c.status==='pending'&&c.incoming;
   const b=document.createElement('button');
@@ -99,13 +101,14 @@ function renderContactList(){
   b.innerHTML='<span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><span class="contactData"><strong>'+esc(c.display_name)+'</strong><small>'+(request?'New request':c.status==='pending'?'Request sent':c.status==='accepted'?'Live conversation':'Declined')+'</small><small>'+preview+'</small></span>'+(request?'<span class="pd-unread-dot" aria-label="New request"></span>':unread?'<span class="pd-unread-count">'+unread+'</span>':'');
   b.onclick=()=>openConversation(c);box.append(b);
  }
- if(supportItems.length&&'Pattaya Dating Support'.toLowerCase().includes(q)){const unread=supportItems.filter(m=>!m.read_at).length;const b=document.createElement('button');b.className='chatitem'+(activeDemo===0?' selected':'')+(unread?' pd-contact-unread':'');b.innerHTML='<span class="contactAvatar">♥</span><span class="contactData"><strong>Pattaya Dating Support</strong><small>'+esc(supportItems[supportItems.length-1].body.slice(0,58))+'</small></span>'+(unread?'<span class="pd-unread-count">'+unread+'</span>':'');b.onclick=showSupportConversation;box.prepend(b)}
+ if(pdInboxTab!=='outbox'&&supportItems.length&&(pdInboxTab==='inbox'||supportItems.some(m=>!m.read_at))&&'Pattaya Dating Support'.toLowerCase().includes(q)){const unread=supportItems.filter(m=>!m.read_at).length;const b=document.createElement('button');b.className='chatitem'+(activeDemo===0?' selected':'')+(unread?' pd-contact-unread':'');b.innerHTML='<span class="contactAvatar">♥</span><span class="contactData"><strong>Pattaya Dating Support</strong><small>'+esc(supportItems[supportItems.length-1].body.slice(0,58))+'</small></span>'+(unread?'<span class="pd-unread-count">'+unread+'</span>':'');b.onclick=showSupportConversation;box.prepend(b)}
  const demos=demoPeople().slice().sort((a,b)=>{const latest=x=>Number(window.pdDemoActivity?.[x.id]||0);return latest(b)-latest(a)});
- for(const p of demos.filter(p=>p.name.toLowerCase().includes(q))){
+ for(const p of (pdInboxTab==='inbox'?demos:pdInboxTab==='outbox'?demos.filter(p=>(window.pdDemoMessages?.[p.id]||[]).some(m=>m.mine)):[]).filter(p=>p.name.toLowerCase().includes(q))){
   const b=document.createElement('button');b.className='chatitem'+(!selected&&activeDemo===p.id?' selected':'');
   b.innerHTML=demoAvatar(p)+'<span class="contactData"><strong>'+esc(p.name)+', '+p.age+' · Virtual</strong><small>'+esc((window.pdDemoMessages?.[p.id]||[]).at(-1)?.text||'Chat now for free · Demo AI conversation')+'</small></span>';
   b.onclick=()=>openDemo(p.id);box.append(b);
  }
+ if(!box.children.length){const empty=document.createElement('div');empty.className='pd-inbox-empty';empty.textContent=pdInboxTab==='unread'?'No unread messages':pdInboxTab==='outbox'?'No sent messages yet':'No conversations found';box.append(empty)}
 }
 function addChatDesignDetails(){
  const contact=document.querySelector('.chatContacts'),side=document.getElementById('unified-side');
