@@ -646,3 +646,28 @@ body.pd-messenger-page .bottom{background:#17181e!important;border-top:1px solid
 body.pd-messenger-page .bottom .bnav{color:#9999a5!important}
 body.pd-messenger-page .bottom .bnav.active{color:#ed53a7!important}
 }
+
+/* Messenger conversation detail v5.2 — tighter mobile header, tool rail and composer */
+.pd-chat-info,.pd-chat-tools{display:none}
+@media(max-width:850px){
+body.pd-messenger-page .chatLayout.pd-mobile-chat-open .pd-mobile-chat-back{position:absolute;top:6px;left:4px;z-index:3;min-height:48px!important;padding:9px 6px!important;background:transparent!important;font-size:30px!important}
+body.pd-messenger-page .chatLayout.pd-mobile-chat-open .pd-mobile-chat-back span{display:none}
+body.pd-messenger-page .chatLayout.pd-mobile-chat-open{position:relative}
+body.pd-messenger-page .chatLayout.pd-mobile-chat-open .chatMain{padding:3px 10px 9px!important}
+body.pd-messenger-page .chatMain .chat-head{padding:5px 0 11px 42px!important;min-height:60px!important;gap:9px!important}
+body.pd-messenger-page .chatMain .chat-head h2{font-size:17px!important;line-height:1.25;margin:0 0 4px}
+body.pd-messenger-page .chatMain .chat-head .chatSub{font-size:10px!important;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+body.pd-messenger-page .chatMain .contactAvatar.pd-photo-avatar{height:39px!important;width:39px!important;flex:0 0 39px}
+body.pd-messenger-page .chatMain .head-actions{gap:0!important}
+body.pd-messenger-page .chatMain .head-actions button{padding:3px!important}
+body.pd-messenger-page .pd-chat-info{display:grid;place-items:center;border:0;background:none;color:#b17aff;font-size:23px;flex-shrink:0;width:30px;height:36px}
+body.pd-messenger-page .chatMain .chatlog{padding:14px 4px 8px!important}
+body.pd-messenger-page .chatMain .bubble{max-width:80%;font-size:14px!important;line-height:1.4!important}
+body.pd-messenger-page .chatMain .composer{background:transparent!important;border:0!important;border-radius:0!important;gap:5px;padding:0!important;display:flex;align-items:center;min-height:48px}
+body.pd-messenger-page .chatMain .pd-chat-tools{display:flex;align-items:center;gap:3px;flex:0 0 auto}
+body.pd-messenger-page .pd-chat-tools button{border:0;background:none;color:#a77aff;font-size:25px;font-weight:600;padding:4px;line-height:1;width:31px;height:38px}
+body.pd-messenger-page .chatMain .composer input{border-radius:23px!important;background:#292b32!important;min-width:0;height:43px!important;padding:10px 14px!important;flex:1 1 auto}
+body.pd-messenger-page .chatMain .composer .primary{height:41px;min-width:48px;padding:9px 11px!important;border-radius:22px!important}
+body.pd-messenger-page .chatMain .microcopy{margin:5px 4px 0!important}
+}
+@media(max-width:380px){body.pd-messenger-page .chatMain .head-actions .giftbtn{display:none!important}}
