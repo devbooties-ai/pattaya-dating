@@ -671,3 +671,17 @@ body.pd-messenger-page .chatMain .composer .primary{height:41px;min-width:48px;p
 body.pd-messenger-page .chatMain .microcopy{margin:5px 4px 0!important}
 }
 @media(max-width:380px){body.pd-messenger-page .chatMain .head-actions .giftbtn{display:none!important}}
+
+/* Mobile chat visual correction v5.3: navy / Pattaya pink, clear camera icon */
+@media(max-width:850px){
+body.pd-messenger-page .chatLayout.pd-mobile-chat-open .pd-mobile-chat-back{color:#ff4782!important}
+body.pd-messenger-page .chatMain .head-actions .video-btn{display:grid!important;place-items:center;width:35px;height:38px;min-width:35px;font-size:0!important;color:#ff4782!important}
+body.pd-messenger-page .chatMain .head-actions .video-btn::after{content:"";display:block;width:25px;height:22px;background:currentColor;clip-path:polygon(0% 15%,65% 15%,65% 35%,100% 12%,100% 88%,65% 65%,65% 85%,0% 85%);border-radius:4px}
+body.pd-messenger-page .chatMain .head-actions .giftbtn{color:#ff4782!important}
+body.pd-messenger-page .pd-chat-info{color:#ff4782!important}
+body.pd-messenger-page .chatMain .head-actions .giftbtn::after{content:'🎁';font-size:19px}
+body.pd-messenger-page .chatMain .bubble.mine{background:#fa3f7b!important;color:#fff!important}
+body.pd-messenger-page .chatMain .composer .primary{background:#fa3f7b!important;box-shadow:none!important;color:white!important}
+body.pd-messenger-page .pd-chat-tools button{color:#ff4782!important}
+body.pd-messenger-page .chatMain .chat-head .chatSub{max-width:150px}
+}
