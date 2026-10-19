@@ -765,3 +765,34 @@ body.pd-discover-mockup .pd-swipe-top button{background:#27282d;color:#fff}
 body.pd-discover-mockup .pd-swipe-hint{color:#9a9ca6;padding-bottom:4px}
 }
 @media(prefers-reduced-motion:reduce){.pd-swipe-card{transition:none!important}}
+
+/* v6.2 Native full-height Tinder-inspired mobile shell (swipe route only) */
+@media(max-width:850px){
+html:has(body.pd-discover-mockup),body.pd-discover-mockup{height:100%;overflow:hidden!important;overscroll-behavior:none}
+body.pd-discover-mockup .app{display:block!important;height:100dvh!important;min-height:0!important;overflow:hidden!important;padding:0!important;background:#101114!important}
+body.pd-discover-mockup .shell{height:100dvh!important;min-height:0!important;width:100%!important;display:flex!important;flex-direction:column;overflow:hidden!important;padding:0!important;margin:0!important}
+body.pd-discover-mockup #content{display:flex!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+body.pd-discover-mockup .pd-swipe-mobile{flex:1 1 auto!important;min-height:0!important;height:100%!important;overflow:hidden!important}
+body.pd-discover-mockup .pd-swipe-stage{padding:5px 9px 0!important}
+body.pd-discover-mockup .pd-swipe-top{flex-basis:47px!important;padding:3px 14px!important}
+body.pd-discover-mockup .pd-swipe-actions{height:64px!important;flex:0 0 64px!important;gap:11px!important}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-pass{width:53px!important;height:53px!important;font-size:26px!important}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-like{width:53px!important;height:53px!important;font-size:25px!important}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-chat{height:48px!important;min-width:132px!important;border-radius:28px!important}
+body.pd-discover-mockup .pd-swipe-hint{display:none}
+body.pd-discover-mockup .bottom,body.pd-explore-page .bottom{background:#121214!important;border-top:1px solid #25252a!important;color:#bdbdc2!important}
+body.pd-discover-mockup .bottom .bnav,body.pd-explore-page .bottom .bnav{color:#bbbcc2!important;font-size:10px!important}
+body.pd-discover-mockup .bottom .bnav.active,body.pd-explore-page .bottom .bnav.active{color:#fff!important}
+body.pd-discover-mockup .bottom .bnav .ni,body.pd-explore-page .bottom .bnav .ni{font-size:23px!important}
+body.pd-discover-mockup .bottom{position:fixed!important;bottom:0!important;left:0;right:0;z-index:999;height:calc(62px + env(safe-area-inset-bottom,0px))!important}
+body.pd-discover-mockup .pd-swipe-mobile{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important}
+body.pd-explore-page .top{display:none!important}
+.pd-explore{padding:24px 14px 95px;background:#111214;color:#fff;min-height:100dvh}
+.pd-explore h1{font-size:29px;color:#fff;margin:0}
+.pd-explore p{color:#a7a8ad}
+.pd-explore h2{font-size:19px;margin:23px 0 12px;color:#fff}
+.pd-explore-areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:22px}
+.pd-explore-areas button{border:1px solid #383941;background:linear-gradient(145deg,#323238,#19191f);color:#fff;padding:23px 12px;border-radius:15px;text-align:left;font-size:13px;font-weight:800;cursor:pointer}
+.pd-explore-areas span{float:right}
+.pd-explore-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+}
