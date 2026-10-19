@@ -709,3 +709,33 @@ body.pd-messenger-page .chatMain .head-actions .giftbtn::after{content:"🎁";fo
 .pd-gift-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
 .pd-gift-options button{background:#252839;border:1px solid #44475b;border-radius:15px;padding:18px 6px;color:white;font-size:32px;display:grid;justify-items:center;gap:9px;cursor:pointer}
 .pd-gift-options small{font-size:12px;font-weight:700}
+
+/* Tinder-inspired mobile discovery v6.0 — Pattaya Dating original branding */
+.pd-swipe-mobile{display:none}
+@media(max-width:850px){
+body.pd-discover-mockup .pd-mock-discover{display:none!important}
+body.pd-discover-mockup .pd-swipe-mobile{display:flex;flex-direction:column;width:100%;height:calc(100dvh - 62px - env(safe-area-inset-bottom,0px));min-height:0;background:#fff;overflow:hidden}
+body.pd-discover-mockup .pd-swipe-top{flex:0 0 56px;display:flex;align-items:center;justify-content:space-between;padding:8px 17px;border-bottom:1px solid #f0f1f4;color:#16223b}
+body.pd-discover-mockup .pd-swipe-top strong{font-size:18px;letter-spacing:-.6px}
+body.pd-discover-mockup .pd-swipe-top strong span{color:#ff4079}
+body.pd-discover-mockup .pd-swipe-top button{border:0;background:#f5f5f8;border-radius:50%;font-size:23px;width:40px;height:40px;color:#263550;cursor:pointer}
+body.pd-discover-mockup .pd-swipe-stage{flex:1 1 auto;display:flex;min-height:0;flex-direction:column;padding:10px 10px 6px;gap:10px}
+body.pd-discover-mockup .pd-swipe-card{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;border-radius:17px;background:#1a1d28;touch-action:pan-y;user-select:none}
+body.pd-discover-mockup .pd-swipe-card>img{height:100%;width:100%;object-fit:cover;object-position:center 35%;pointer-events:none}
+body.pd-discover-mockup .pd-swipe-overlay{position:absolute;inset:0;background:linear-gradient(to top,#0a0b10d9,transparent 47%)}
+body.pd-discover-mockup .pd-swipe-caption{position:absolute;left:19px;bottom:20px;color:white;right:50px}
+body.pd-discover-mockup .pd-swipe-caption h2{font-size:29px;color:#fff;font-weight:850;letter-spacing:-.8px;margin:0 0 5px}
+body.pd-discover-mockup .pd-swipe-caption h2 span{font-weight:500}
+body.pd-discover-mockup .pd-swipe-caption p{font-size:14px;color:#fff;margin:0 0 6px}
+body.pd-discover-mockup .pd-swipe-caption small{font-size:10px;color:#e9e4eb}
+body.pd-discover-mockup .pd-swipe-detail{position:absolute;right:16px;bottom:23px;border:0;background:#ffffff30;color:white;font-size:25px;width:38px;height:38px;border-radius:50%;cursor:pointer}
+body.pd-discover-mockup .pd-swipe-actions{height:70px;flex:0 0 70px;display:flex;justify-content:center;align-items:center;gap:25px}
+body.pd-discover-mockup .pd-swipe-actions button{border-radius:50%;display:grid;place-items:center;border:2px solid #edeef3;background:#fff;box-shadow:0 5px 17px #0f18211b;font-size:26px;width:57px;height:57px;cursor:pointer}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-pass{color:#ed6370}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-chat{color:#388fce;width:49px;height:49px;font-size:23px}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-like{color:#ff4079}
+body.pd-discover-mockup .pd-swipe-hint{margin:0;padding:0 6px 7px;text-align:center;font-size:10px;color:#9aa0ae}
+body.pd-discover-mockup .pd-swipe-empty{flex:1;display:grid;place-content:center;text-align:center;gap:14px;color:#18253c}
+body.pd-discover-mockup .pd-swipe-empty button{border:0;background:#fa4179;color:#fff;border-radius:14px;padding:14px}
+body.pd-discover-mockup .notice{display:none}
+}
