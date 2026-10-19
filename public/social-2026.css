@@ -796,3 +796,47 @@ body.pd-explore-page .top{display:none!important}
 .pd-explore-areas span{float:right}
 .pd-explore-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 }
+
+/* v6.3 shared mobile Tinder-inspired surface */
+@media(max-width:850px){
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page){background:#101012!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page) .app,
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page) .shell{background:#101012!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page) .shell{width:100%!important;max-width:none!important;min-width:0;padding:0 0 80px!important;margin:0!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page) .top{display:none!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page) #content{min-width:0!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page):not(.pd-messenger-page) .notice{display:none!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page) .bottom{background:#131316!important;border-top:1px solid #26262a!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page) .bottom .bnav{color:#b9b9c0!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page) .bottom .bnav.active{color:#fff!important}
+body:not(.pd-discover-mockup):not(.pd-compact-member-page) .bottom .bnav .ni{font-size:23px!important}
+body.pd-explore-page .pd-explore{margin:0!important;min-height:100dvh;padding:21px 15px 95px!important;width:100%!important;box-sizing:border-box!important;background:#111114!important}
+body.pd-explore-page .pd-explore-cards .pd-mock-card{background:#24252b!important;border-color:#34353c!important}
+body.pd-explore-page .pd-explore-cards .pd-mock-name{color:#fff!important}
+body.pd-explore-page .pd-explore-cards .pd-mock-name span,body.pd-explore-page .pd-explore-cards .pd-mock-loc{color:#b4b5bf!important}
+body.pd-explore-page .pd-explore-cards .pd-mock-tags span{background:#34353b!important;color:#dadbe3!important}
+body.pd-explore-page .pd-explore-cards .pd-mock-actions .pd-mock-like{background:#35303a!important}
+.pd-tinder-likes{background:#101012;color:#fff;min-height:calc(100dvh - 65px);padding:21px 15px 95px;box-sizing:border-box}
+.pd-tinder-likes h1{font-size:32px;color:white;margin:0 0 20px;font-weight:850}
+.pd-likes-tabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #313138;gap:3px}
+.pd-likes-tabs button{background:none;color:#b9b9bf;border:0;border-bottom:2px solid transparent;font-weight:750;padding:13px 2px;font-size:12px;cursor:pointer}
+.pd-likes-tabs button.selected{color:#fff;border-bottom-color:#ff4076}
+.pd-tinder-likes h2{font-size:19px;color:#fff;margin:23px 0 16px}
+.pd-likes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.pd-likes-card{position:relative;aspect-ratio:.72;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;overflow:hidden;border:0;border-radius:15px;padding:14px;text-align:left;color:#fff;background:#24262d;cursor:pointer}
+.pd-likes-card:after{content:"";position:absolute;inset:50% 0 0;background:linear-gradient(transparent,#050507c9)}
+.pd-likes-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pd-likes-card strong,.pd-likes-card small{z-index:1;position:relative;color:#fff}
+.pd-likes-card strong{font-size:17px}.pd-likes-card small{font-size:10px;color:#e5e2e6;margin-top:4px}
+.pd-likes-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:52dvh;padding:20px;color:#a5a6b0}
+.pd-likes-empty span{font-size:55px;color:#ff477f}
+.pd-likes-empty h2{margin:12px 0;color:#fff}
+.pd-likes-empty p{font-size:14px;line-height:1.6;max-width:290px}
+.pd-likes-empty button{border:0;border-radius:25px;padding:12px 20px;background:#ff4076;color:white;font-weight:800;margin-top:12px}
+body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell{background:#111114!important;color:#f7f7fa!important;padding:18px 14px 85px!important;margin:0!important}
+body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell .pd-top{background:#222228!important;border-color:#37373f!important;color:white!important}
+body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell .pd-top h2{color:white!important}
+body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell .panel{background:#24252b!important;color:#f6f6fa!important;border-color:#373840!important}
+body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell h2,body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell h3{color:#fff!important}
+body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-page) .pd-shell .muted{color:#a9a9b4!important}
+}
