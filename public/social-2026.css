@@ -881,3 +881,6 @@ body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-pag
 .pd-own-section{margin-top:22px!important}
 .pd-own-section-title h2{font-size:22px!important}
 }
+
+/* Display-name safety feedback */
+.pd-name-status{display:block;margin-top:7px;font-size:11px;color:#9ca7b6;line-height:1.45}.pd-name-status[data-status=allow]{color:#30c890}.pd-name-status[data-status=review]{color:#f5b44c}.pd-name-status[data-status=block]{color:#ff637b}
