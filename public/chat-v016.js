@@ -7,8 +7,10 @@ function halt(){if(timer)clearInterval(timer);timer=null}
 let conversations=[],activeDemo=1, pdInboxTab='all';
 function selectInboxTab(tab){pdInboxTab=tab;document.querySelectorAll('.pd-inbox-tab').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('selected',on);b.setAttribute('aria-selected',String(on))});renderContactList()}
 window.pdSelectInboxTab=selectInboxTab;
+function pdRememberThread(type,id){try{sessionStorage.setItem('pd-active-thread',JSON.stringify({type,id}))}catch(e){}}
+function pdSavedThread(){try{const t=JSON.parse(sessionStorage.getItem('pd-active-thread')||'null');return t&&['demo','real','support'].includes(t.type)?t:null}catch(e){return null}}
 function mobileChat(open){document.querySelector('.chatLayout')?.classList.toggle('pd-mobile-chat-open',!!open)}
-window.pdMobileChatBack=()=>mobileChat(false);
+window.pdMobileChatBack=()=>{try{sessionStorage.removeItem('pd-active-thread')}catch(e){};mobileChat(false)};
 try{window.pdDemoMessages=Object.assign({},JSON.parse(sessionStorage.getItem('pd-demo-messages')||'{}'),window.pdDemoMessages||{})}catch(e){window.pdDemoMessages=window.pdDemoMessages||{}}
 try{window.pdDemoActivity=JSON.parse(sessionStorage.getItem('pd-demo-activity')||'{}')}catch(e){window.pdDemoActivity={}}
 const demoPeople=()=>window.pdDemoProfiles||[{id:1,name:'Mali',age:28,area:'Jomtien'}];
@@ -28,11 +30,13 @@ async function list(el){
  }else conversations=[];
  if(user())await refreshSupport();
  renderContactList();
- const openRequested=!!window.pdRequestedDemoId;
- if(window.pdRequestedDemoId){activeDemo=Number(window.pdRequestedDemoId);window.pdRequestedDemoId=null}
- const found=conversations.find(c=>c.id===selected);
- if(found)openConversation(found);else if(activeDemo===0&&supportItems.length)showSupportConversation();else openDemo(activeDemo);
- mobileChat(openRequested);
+ const explicitDemo=window.pdRequestedDemoId;
+ const saved=explicitDemo?{type:'demo',id:Number(explicitDemo)}:pdSavedThread();
+ window.pdRequestedDemoId=null;
+ if(saved?.type==='demo'&&demoPeople().some(p=>p.id===Number(saved.id)))openDemo(Number(saved.id));
+ else if(saved?.type==='real'&&conversations.some(c=>String(c.id)===String(saved.id)))openConversation(conversations.find(c=>String(c.id)===String(saved.id)));
+ else if(saved?.type==='support'&&supportItems.length)showSupportConversation();
+ else{const first=conversations.find(c=>c.id===selected);if(first)openConversation(first);else if(activeDemo===0&&supportItems.length)showSupportConversation();else openDemo(activeDemo);mobileChat(false)}
  contactsTimer=setInterval(refreshContacts,12000);attachRealtime();
 }
 async function refreshContacts(){
@@ -78,7 +82,7 @@ async function refreshSupport(){
  if(!error){supportItems=data||[];renderContactList();window.PattayaNotifications?.refresh?.()}
 }
 function showSupportConversation(){
- halt();selected=null;activeDemo=0;renderContactList();mobileChat(true);
+ halt();selected=null;activeDemo=0;pdRememberThread('support',0);renderContactList();mobileChat(true);
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">♥</span><div><h2>Pattaya Dating Support</h2><span class="chatSub">Official system messages</span></div></header><div class="chatlog" id="support-chat-messages"></div><form class="composer" id="pd-support-compose"><input name="message" maxlength="2000" placeholder="Write to Support…" required><button class="primary">Send</button></form><p class="microcopy" id="pd-support-status">Messages are sent to Pattaya Dating Support.</p>';
  side.innerHTML='<div class="inspectorAvatar">♥</div><div class="inspectorName">Pattaya Dating Support</div><div class="inspectorMeta">Official platform account</div><p class="microcopy">This is a system conversation, not a dating profile.</p>';
@@ -145,7 +149,7 @@ function pdOpenGiftPicker(id){
  dialog.querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const gift=b.dataset.gift;close();const log=document.getElementById('unified-demo-log');if(log){const bubble=document.createElement('div');bubble.className='bubble mine pd-gift-preview-bubble';bubble.textContent=gift+' · Preview only';log.append(bubble);log.scrollTop=log.scrollHeight}else alert(gift+' selected. Gift delivery is not enabled yet.');});
 }
 function openDemo(id){
- halt();selected=null;activeDemo=id;renderContactList();mobileChat(true);
+ halt();selected=null;activeDemo=id;pdRememberThread('demo',id);renderContactList();mobileChat(true);
  // Use the original, established chat content as a template, without switching pages.
  const p=demoPeople().find(person=>person.id===id)||demoPeople()[0];
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
@@ -161,7 +165,7 @@ function openDemo(id){
  for(const el of ['demo-video','demo-side-video'])document.getElementById(el).onclick=()=>window.openVideoCall?.(id);
 }
 async function openConversation(c){
- halt();selected=c.id;renderContactList();mobileChat(true);
+ halt();selected=c.id;pdRememberThread('real',c.id);renderContactList();mobileChat(true);
  {const {error:readError}=await client().rpc('dating_mark_read',{conv_id:c.id});if(!readError){c.unread_count=0;renderContactList();window.PattayaNotifications?.refresh?.()}}
  const center=document.getElementById('unified-center'),side=document.getElementById('unified-side');if(!center||!side)return;
  center.innerHTML='<header class="chat-head"><span class="contactAvatar">'+esc(c.display_name[0]||'?')+'</span><div><h2>'+esc(c.display_name)+'</h2><span class="chatSub">'+esc(c.status==='pending'?'Message request · Live member':'Live member · '+c.status)+'</span></div></header><div class="chatlog" id="live-messages">Loading…</div><div id="live-chat-actions"></div><p id="live-chat-note" class="microcopy" role="status"></p>';
