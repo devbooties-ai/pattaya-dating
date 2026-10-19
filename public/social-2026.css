@@ -739,3 +739,29 @@ body.pd-discover-mockup .pd-swipe-empty{flex:1;display:grid;place-content:center
 body.pd-discover-mockup .pd-swipe-empty button{border:0;background:#fa4179;color:#fff;border-radius:14px;padding:14px}
 body.pd-discover-mockup .notice{display:none}
 }
+
+/* Swipe polish v6.1: Tinder-inspired motion and integrated controls */
+@media(max-width:850px){
+body.pd-discover-mockup .pd-swipe-stage{gap:0;padding:6px 7px 5px}
+body.pd-discover-mockup .pd-swipe-stack{position:relative;flex:1 1 auto;min-height:0;isolation:isolate}
+body.pd-discover-mockup .pd-swipe-under{position:absolute;inset:0 9px 4px;border-radius:20px;overflow:hidden;transform:scale(.968) translateY(5px);background:#222}
+body.pd-discover-mockup .pd-swipe-under img{width:100%;height:100%;object-fit:cover;filter:brightness(.78)}
+body.pd-discover-mockup .pd-swipe-card{position:absolute;inset:0;min-height:0;touch-action:pan-y;transform:translate3d(var(--swipe-x,0px),var(--swipe-y,0px),0) rotate(var(--swipe-rotate,0deg));transition:transform .28s cubic-bezier(.22,.78,.2,1),box-shadow .2s;will-change:transform;box-shadow:0 9px 28px #080c1533;border-radius:19px;overflow:hidden}
+body.pd-discover-mockup .pd-swipe-card.pd-swipe-dragging{transition:none;cursor:grabbing}
+body.pd-discover-mockup .pd-swipe-card.pd-swipe-flying{transition:transform .28s cubic-bezier(.36,.06,.75,.43);pointer-events:none}
+body.pd-discover-mockup .pd-swipe-stamp{position:absolute;top:35px;left:22px;border:4px solid #55e39f;border-radius:11px;color:#55e39f;font-size:35px;font-weight:900;transform:rotate(-15deg);padding:7px 14px;letter-spacing:2px;opacity:0;pointer-events:none;text-shadow:0 1px 5px #0009}
+body.pd-discover-mockup .pd-swipe-stamp.nope{left:auto;right:18px;color:#ff767e;border-color:#ff767e;transform:rotate(15deg)}
+body.pd-discover-mockup .pd-swipe-overlay{background:linear-gradient(0deg,#09090ff2 0%,#09090f7a 17%,transparent 49%)}
+body.pd-discover-mockup .pd-swipe-caption{bottom:16px;left:17px}
+body.pd-discover-mockup .pd-swipe-caption h2{font-size:30px}
+body.pd-discover-mockup .pd-swipe-actions{height:76px;flex:0 0 76px;gap:14px;background:transparent}
+body.pd-discover-mockup .pd-swipe-actions button{box-shadow:none!important;background:#1f2025!important;border:1px solid #3a3b42!important;color:#fff!important;width:57px;height:57px;font-size:27px}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-chat{border-radius:30px!important;min-width:130px;width:auto;height:52px;padding:0 15px;font-size:13px;font-weight:850;background:#27282d!important}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-like{color:#ff496e!important}
+body.pd-discover-mockup .pd-swipe-actions .pd-swipe-pass{color:#fff!important}
+body.pd-discover-mockup .pd-swipe-mobile{background:#101114;color:#fff}
+body.pd-discover-mockup .pd-swipe-top{background:#101114;color:#fff;border-color:#2a2c30}
+body.pd-discover-mockup .pd-swipe-top button{background:#27282d;color:#fff}
+body.pd-discover-mockup .pd-swipe-hint{color:#9a9ca6;padding-bottom:4px}
+}
+@media(prefers-reduced-motion:reduce){.pd-swipe-card{transition:none!important}}
