@@ -867,3 +867,17 @@ body:not(.pd-discover-mockup):not(.pd-messenger-page):not(.pd-compact-member-pag
 .pd-own-row{width:100%;padding:15px 2px;background:transparent;color:#f7f7fb;text-align:left;border:0;border-bottom:1px solid #303036;font-size:14px;display:flex;justify-content:space-between;cursor:pointer}
 .pd-own-row span{color:#a9a9b2;font-size:23px}
 @media(min-width:851px){.pd-own-profile{max-width:870px;margin:auto;padding:25px 28px 60px;border-radius:18px}.pd-own-photo-main,.pd-own-photo-add{height:215px}}
+
+/* Own profile mobile polish v6.4 */
+@media(max-width:850px){
+.pd-own-profile{padding:18px 14px 85px!important}
+.pd-own-head{gap:12px!important;margin-bottom:20px!important}
+.pd-own-avatar{width:76px!important;height:85px!important;cursor:pointer;flex-shrink:0}
+.pd-own-head .pd-own-id h1{font-size:27px!important}
+.pd-own-photos{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+.pd-own-photo-main,.pd-own-photo-add{height:auto!important;min-height:0!important;aspect-ratio:.78!important;border-radius:13px!important}
+.pd-own-photo-main img{height:100%!important}
+.pd-own-photo-add{font-size:32px!important}
+.pd-own-section{margin-top:22px!important}
+.pd-own-section-title h2{font-size:22px!important}
+}
