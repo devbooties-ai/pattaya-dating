@@ -17,9 +17,8 @@ const demoAvatar=(p,side=false)=>'<span class="'+(side?'inspectorAvatar':'contac
 async function list(el){
  halt();if(contactsTimer)clearInterval(contactsTimer);
  // Keep the established v0.6 three-column design for both demo and real chats.
- el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><div class="pd-mobile-messenger-title"><h2>Chats</h2><button type="button" data-action="discover" aria-label="Discover people">✎</button></div><div class="pd-messenger-filters" role="group" aria-label="Conversation filters"><button type="button" class="pd-inbox-tab selected" data-tab="all">All chats</button><button type="button" class="pd-inbox-tab" data-tab="unread">Unread</button><button type="button" class="pd-inbox-tab" data-tab="requests">Requests</button></div><div class="chatContactCount">Your conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Virtual chats are identified separately from real accounts.</div></aside><button type="button" class="pd-mobile-chat-back" onclick="pdMobileChatBack()">‹ <span>Chats</span></button><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
+ el.innerHTML='<div class="chatLayout"><aside class="panel chatContacts"><div class="pd-mobile-messenger-title"><h2>Chats</h2></div><div class="pd-messenger-filters" role="group" aria-label="Conversation filters"><button type="button" class="pd-inbox-tab selected" data-tab="all">All chats</button><button type="button" class="pd-inbox-tab" data-tab="unread">Unread</button><button type="button" class="pd-inbox-tab" data-tab="requests">Requests</button></div><div class="chatContactCount">Your conversations</div><input class="chatSearch" id="unified-search" placeholder="Search conversations..." aria-label="Search conversations"><div class="chatitems" id="unified-contacts"></div><div class="chatSub">Virtual chats are identified separately from real accounts.</div></aside><button type="button" class="pd-mobile-chat-back" onclick="pdMobileChatBack()">‹ <span>Chats</span></button><section class="panel chatMain" id="unified-center"></section><aside class="panel chatInspector" id="unified-side"></aside></div>';
  document.getElementById('unified-search').oninput=renderContactList;
- document.querySelector('.pd-mobile-messenger-title button')?.addEventListener('click',()=>window.go?.('discover'));
  document.querySelectorAll('.pd-inbox-tab').forEach(button=>button.addEventListener('click',()=>selectInboxTab(button.dataset.tab)));
  if(user()){
  const {data,error}=await client().rpc('dating_my_conversations');
@@ -124,7 +123,7 @@ function renderContactList(){
 }
 function addChatDesignDetails(){
  const contact=document.querySelector('.chatContacts'),side=document.getElementById('unified-side');
- if(contact&&!contact.querySelector('.pd-chat-contact-label')){const label=document.createElement('div');label.className='pd-chat-contact-label';label.innerHTML='<span>CONVERSATIONS</span><span class="pd-chat-mini-heart">♥</span>';contact.querySelector('.chatitems')?.before(label)}
+
  if(side&&!side.querySelector('.pd-chat-gift-preview')){
  const preview=document.createElement('section');preview.className='pd-chat-gift-preview';
  preview.innerHTML='<div class="pd-chat-gift-title"><strong>Make a sweet impression</strong><span>PREVIEW</span></div><div class="pd-chat-gift-items"><div><img src="./assets/social-2026/gift-diamond.webp" alt="Original diamond gift illustration" loading="lazy"><strong>Diamond</strong></div><div><span class="pd-chat-gift-emoji">🌹</span><strong>Rose</strong></div><div><span class="pd-chat-gift-emoji">💝</span><strong>Heart</strong></div></div><p>Gifts and coin purchases are not available for real accounts yet.</p>';
@@ -133,8 +132,17 @@ function addChatDesignDetails(){
 }
 function enhanceMobileConversation(){
  const center=document.getElementById('unified-center');if(!center)return;
- const head=center.querySelector('.chat-head');if(head&&!head.querySelector('.head-actions .video-btn')){const actions=document.createElement('div');actions.className='head-actions';const video=document.createElement('button');video.type='button';video.className='lightbtn video-btn pd-video-placeholder';video.setAttribute('aria-label','Video calling coming soon');video.title='Video calls coming soon';video.textContent='Video call';video.onclick=()=>alert('Video calling is not available in this beta.');actions.append(video);head.append(actions)}if(head&&!head.querySelector('.pd-chat-info')){const button=document.createElement('button');button.type='button';button.className='pd-chat-info';button.textContent='ⓘ';button.setAttribute('aria-label','Conversation information');button.onclick=()=>{const side=document.getElementById('unified-side');const name=head.querySelector('h2')?.textContent||'Contact';alert(name+' — '+(side?.querySelector('.inspectorMeta')?.textContent||'Conversation information'))};head.append(button)}
+ const head=center.querySelector('.chat-head');
+ if(head){head.querySelector('.pd-chat-info')?.remove();let actions=head.querySelector('.head-actions');if(!actions){actions=document.createElement('div');actions.className='head-actions';head.append(actions)}
+ if(!actions.querySelector('.video-btn')){const video=document.createElement('button');video.type='button';video.className='lightbtn video-btn pd-video-placeholder';video.textContent='Video call';video.title='Video calls coming soon';video.setAttribute('aria-label','Video call preview');video.onclick=()=>alert('Video calling is not available in this beta.');actions.append(video)}
+ }
  const form=center.querySelector('.composer');if(form&&!form.querySelector('.pd-chat-tools')){const tools=document.createElement('div');tools.className='pd-chat-tools';for(const [glyph,title] of [['＋','More options'],['☺','Emoji']]){const b=document.createElement('button');b.type='button';b.textContent=glyph;b.title=title;b.setAttribute('aria-label',title);b.onclick=()=>{const input=form.querySelector('input');if(glyph==='☺'&&input){input.value+='😊';input.focus()}else input?.focus()};tools.append(b)}form.prepend(tools)}
+}
+function pdOpenGiftPicker(id){
+ const dialog=document.createElement('div');dialog.className='pd-gift-overlay';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Choose a gift preview');
+ dialog.innerHTML='<div class="pd-gift-sheet"><div class="pd-gift-sheet-head"><strong>Send a gift</strong><button class="pd-gift-close" aria-label="Close">×</button></div><p>Choose a virtual gift to preview. No coins are charged and nothing is delivered to another user.</p><div class="pd-gift-options"><button data-gift="🌹 Rose">🌹<small>Rose</small></button><button data-gift="💝 Heart">💝<small>Heart</small></button><button data-gift="💎 Diamond">💎<small>Diamond</small></button></div></div>';
+ document.body.append(dialog);const close=()=>dialog.remove();dialog.querySelector('.pd-gift-close').onclick=close;dialog.addEventListener('click',e=>{if(e.target===dialog)close()});
+ dialog.querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const gift=b.dataset.gift;close();const log=document.getElementById('unified-demo-log');if(log){const bubble=document.createElement('div');bubble.className='bubble mine pd-gift-preview-bubble';bubble.textContent=gift+' · Preview only';log.append(bubble);log.scrollTop=log.scrollHeight}else alert(gift+' selected. Gift delivery is not enabled yet.');});
 }
 function openDemo(id){
  halt();selected=null;activeDemo=id;renderContactList();mobileChat(true);
@@ -149,7 +157,7 @@ function openDemo(id){
  window.pdDemoMessages=window.pdDemoMessages||{};const arr=window.pdDemoMessages[id]||(window.pdDemoMessages[id]=demoData);
  const draw=()=>{const log=document.getElementById('unified-demo-log');if(!log)return;log.replaceChildren();for(const m of arr){const bubble=document.createElement('div');bubble.className='bubble'+(m.mine?' mine':'');bubble.textContent=m.text;log.append(bubble)}log.scrollTop=log.scrollHeight};draw();
  document.getElementById('unified-demo-compose').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;arr.push({mine:true,text:f.querySelector('input').value.trim()});window.pdDemoActivity=window.pdDemoActivity||{};window.pdDemoActivity[id]=Date.now();try{sessionStorage.setItem('pd-demo-activity',JSON.stringify(window.pdDemoActivity))}catch(e){}try{sessionStorage.setItem('pd-demo-messages',JSON.stringify(window.pdDemoMessages))}catch(e){}f.reset();draw();renderContactList()};
- for(const el of ['demo-gift','demo-side-gift'])document.getElementById(el).onclick=()=>window.openGiftShop?.(id);
+ for(const el of ['demo-gift','demo-side-gift'])document.getElementById(el).onclick=()=>pdOpenGiftPicker(id);
  for(const el of ['demo-video','demo-side-video'])document.getElementById(el).onclick=()=>window.openVideoCall?.(id);
 }
 async function openConversation(c){
