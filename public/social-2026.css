@@ -685,3 +685,27 @@ body.pd-messenger-page .chatMain .composer .primary{background:#fa3f7b!important
 body.pd-messenger-page .pd-chat-tools button{color:#ff4782!important}
 body.pd-messenger-page .chatMain .chat-head .chatSub{max-width:150px}
 }
+
+/* Messenger mobile cleanup v5.4 */
+@media(max-width:850px){
+body.pd-messenger-page .chatLayout>.chatContacts{padding-top:9px!important;gap:9px!important}
+body.pd-messenger-page .pd-mobile-messenger-title h2{font-size:26px!important}
+body.pd-messenger-page .pd-mobile-messenger-title{min-height:39px}
+body.pd-messenger-page .pd-messenger-filters{order:2}
+body.pd-messenger-page .chatSearch{order:1}
+body.pd-messenger-page .chatContacts .chatitems{order:3}
+body.pd-messenger-page .pd-chat-contact-label{display:none!important}
+body.pd-messenger-page .chatMain .pd-chat-info{display:none!important}
+body.pd-messenger-page .chatMain .head-actions .video-btn{display:grid!important;place-items:center;width:37px!important;min-width:37px!important;height:39px!important;color:#ff4782!important}
+body.pd-messenger-page .chatMain .head-actions .video-btn::after{content:"";width:25px;height:22px;background:currentColor;clip-path:polygon(0 12%,63% 12%,63% 33%,100% 12%,100% 88%,63% 67%,63% 88%,0 88%);display:block}
+body.pd-messenger-page .chatMain .head-actions .giftbtn{font-size:0!important;width:34px;height:38px;display:grid!important;place-items:center}
+body.pd-messenger-page .chatMain .head-actions .giftbtn::after{content:"🎁";font-size:21px}
+}
+.pd-gift-overlay{position:fixed;inset:0;background:#070916b8;z-index:10000;display:flex;align-items:flex-end;justify-content:center}
+.pd-gift-sheet{width:min(100%,460px);background:#171924;color:#fff;border-radius:22px 22px 0 0;padding:22px 19px calc(25px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 35px #0004}
+.pd-gift-sheet-head{display:flex;justify-content:space-between;align-items:center;font-size:19px}
+.pd-gift-close{background:#323443;border:0;border-radius:50%;width:33px;height:33px;color:white;font-size:22px;cursor:pointer}
+.pd-gift-sheet p{font-size:12px;color:#adb3c4;line-height:1.6}
+.pd-gift-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.pd-gift-options button{background:#252839;border:1px solid #44475b;border-radius:15px;padding:18px 6px;color:white;font-size:32px;display:grid;justify-items:center;gap:9px;cursor:pointer}
+.pd-gift-options small{font-size:12px;font-weight:700}
